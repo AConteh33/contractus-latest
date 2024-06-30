@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "225967324567",
+    "project_id": "contract-us-a7465",
+    "storage_bucket": "contract-us-a7465.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:225967324567:android:7441a6eaa858d90709d8d2",
+        "android_client_info": {
+          "package_name": "com.Contractus_LLC.contractus"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2SiXaYNKfGgDWWp1K0kJkImdGcZ-z9Ew"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -85,7 +85,10 @@ class CustomSearchDelegate extends SearchDelegate {
         return GestureDetector(
           onTap: (){
             if(istherenext){
-              SearchResultScreen(titlecategory: matchQuery[i].toString(), jobsearch: false,).launch(context);
+              SearchResultScreen(
+                titlecategory: matchQuery[i].toString(),
+                jobsearch: false,
+              ).launch(context);
             }else{
               Navigator.of(context).pop('results');
             }

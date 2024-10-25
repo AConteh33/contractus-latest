@@ -7,7 +7,8 @@ import 'package:nb_utils/nb_utils.dart';
 import 'package:contractus/controller/authcontroller.dart';
 import 'package:get/get.dart';
 
-import '../../widgets/button_global.dart';
+import '../../../models/auth_data.dart';
+import '../../widgets/custom_buttons/button_global.dart';
 import '../../widgets/constant.dart';
 import '../../widgets/icons.dart';
 import 'client_forgot_password.dart';
@@ -178,7 +179,10 @@ class _ClientLogInState extends State<ClientLogIn> {
                               .signInWithEmailAndPassword(email, password);
                           if (user != null) {
                             // Sign-in successful, navigate to home screen
-                            Get.offAll(ClientHome(signedin: true));
+
+                            Get.offAll(ClientHome(
+                              signedin: true,
+                            ));
                           }
                         }
                       },

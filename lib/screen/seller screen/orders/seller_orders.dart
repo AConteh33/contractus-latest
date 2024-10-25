@@ -1,8 +1,12 @@
+import 'package:contractus/controller/authcontroller.dart';
 import 'package:contractus/controller/datacontroller.dart';
 import 'package:contractus/screen/widgets/cards/ordercard.dart';
+import 'package:contractus/screen/widgets/loading.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:contractus/screen/seller%20screen/orders/seller_order_details.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:slide_countdown/slide_countdown.dart';
@@ -17,6 +21,25 @@ class SellerOrderList extends StatefulWidget {
 }
 
 class _SellerOrderListState extends State<SellerOrderList> {
+
+  DataController datactrlr = DataController();
+  Auth_Controller authy = Auth_Controller();
+  FirebaseAuth fireauth = FirebaseAuth.instance;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    if(authy.signedin.value){
+      print('Running function ${authy.authData.value!.role}');
+      datactrlr.getmyOrderListData(
+          id: fireauth.currentUser!.uid,
+          iseller: authy.authData.value!.role == 'seller'
+      );
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +57,7 @@ class _SellerOrderListState extends State<SellerOrderList> {
         //   centerTitle: true,
         // ),
         body: GetBuilder<DataController>(
+          // init: DataController(),
           builder: (data) {
             return Column(
               children: [
@@ -42,7 +66,7 @@ class _SellerOrderListState extends State<SellerOrderList> {
                   width: MediaQuery.of(context).size.width,
                   child: Center(
                     child: Text(
-                      'Orders',
+                      'Contracts',
                       style: kTextStyle.copyWith(
                           color: kNeutralColor,
                           fontWeight: FontWeight.bold
@@ -63,11 +87,10 @@ class _SellerOrderListState extends State<SellerOrderList> {
                         ),
                       ),
                       child: SingleChildScrollView(
-                        physics: const BouncingScrollPhysics(),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            
+
                             HorizontalList(
                               padding: const EdgeInsets.only(left: 15.0, top: 15.0),
                               itemCount: titleList.length,
@@ -91,12 +114,14 @@ class _SellerOrderListState extends State<SellerOrderList> {
                                     ),
                                   ),
                                 );
-                                
+
                               },
                             ),
-                            
+
                             const SizedBox(height: 15.0),
 
+                            // data.loading.value ?
+                            // LoadingWidget(isloading: true, child: Container()) :
                             ListView.builder(
                               padding: EdgeInsets.zero,
                               physics: const NeverScrollableScrollPhysics(),
@@ -107,11 +132,10 @@ class _SellerOrderListState extends State<SellerOrderList> {
                                 if(data.ordermodel.value[i].status == isSelected){
                                   return OrderCard(
                                     orderModel: data.ordermodel.value[i],
-                                  status: isSelected,
+                                    status: isSelected,
                                   );
                                 }else{}
-                                
-                                
+
                                 },
                             ),
 

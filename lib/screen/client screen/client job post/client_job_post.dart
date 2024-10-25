@@ -8,6 +8,7 @@ import 'package:contractus/screen/widgets/constant.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:nb_utils/nb_utils.dart';
 
+import '../../widgets/searcbox.dart';
 import 'create_new_job_post.dart';
 import 'job_details.dart';
 
@@ -16,9 +17,7 @@ class JobPost extends StatefulWidget {
 
   @override
   State<JobPost> createState() => _JobPostState();
-
 }
-
 
 class _JobPostState extends State<JobPost> {
   @override
@@ -26,16 +25,6 @@ class _JobPostState extends State<JobPost> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: kDarkWhite,
-        // appBar: AppBar(
-        //   backgroundColor: kDarkWhite,
-        //   elevation: 0,
-        //   iconTheme: const IconThemeData(color: kNeutralColor),
-        //   title: Text(
-        //     'Create Service',
-        //     style: kTextStyle.copyWith(color: kNeutralColor, fontWeight: FontWeight.bold),
-        //   ),
-        //   centerTitle: true,
-        // ),
         floatingActionButton: Padding(
           padding: const EdgeInsets.only(bottom: 20.0),
           child: FloatingActionButton(
@@ -59,115 +48,113 @@ class _JobPostState extends State<JobPost> {
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         body: GetBuilder<DataController>(
-          init: DataController(),
-          builder: (data) {
-            return Column(
-              children: [
-                SizedBox(
-                  height: 60,
-                  width: MediaQuery.of(context).size.width,
-                  child: Center(
-                    child: Text(
-                      'Connect with freelancers',
-                      style: kTextStyle.copyWith(
-                          color: kNeutralColor,
-                          fontWeight: FontWeight.bold
+            init: DataController(),
+            builder: (data) {
+              return Column(
+                children: [
+                  SizedBox(
+                    height: 60,
+                    width: MediaQuery.of(context).size.width,
+                    child: Center(
+                      child: Text(
+                        'Connect with freelancers',
+                        style: kTextStyle.copyWith(
+                            color: kNeutralColor, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 0.0),
-                    child: Container(
-                      width: context.width(),
-                      padding: const EdgeInsets.only(left: 15.0, right: 15.0),
-                      decoration: const BoxDecoration(
-                        color: kWhite,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(30.0),
-                          topRight: Radius.circular(30.0),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 0.0),
+                      child: Container(
+                        width: context.width(),
+                        padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                        decoration: const BoxDecoration(
+                          color: kWhite,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(30.0),
+                            topRight: Radius.circular(30.0),
+                          ),
                         ),
-                      ),
-                      child: SingleChildScrollView(
-                        physics: const BouncingScrollPhysics(),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const SizedBox(height: 15.0),
-                            SizedBox(
-                              height: 400,
-                              width: MediaQuery.of(context).size.width,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
+                        child: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+
+
+                              data.serviceModellist.value == []
+                                  ? const SizedBox(height: 50.0)
+                                  : SearchBox(
+                                hint: 'Search Service...',
+                                istherenext: false,
+                                jobsearch: true,
+                              ),
+                              data.serviceModellist.value == []
+                                  ? Column(
+                                mainAxisAlignment:
+                                MainAxisAlignment.center,
+                                crossAxisAlignment:
+                                CrossAxisAlignment.center,
                                 children: [
-                                  const SizedBox(height: 50.0),
                                   Container(
                                     height: 213,
                                     width: 269,
                                     decoration: const BoxDecoration(
-                                      image: DecorationImage(image: AssetImage('images/emptyservice.png'), fit: BoxFit.cover),
+                                      image: DecorationImage(
+                                          image: AssetImage(
+                                              'images/emptyservice.png'),
+                                          fit: BoxFit.cover),
                                     ),
                                   ),
                                   const SizedBox(height: 20.0),
                                   Text(
-                                    'No Services',
-                                    style: kTextStyle.copyWith(color: kNeutralColor, fontWeight: FontWeight.bold, fontSize: 24.0),
+                                    'Empty Services',
+                                    style: kTextStyle.copyWith(
+                                        color: kNeutralColor,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 24.0),
                                   ),
-
                                 ],
                               )
-                            ).visible(
-                                data.serviceModellist.isEmpty
-                            ),
+                                  : const SizedBox(),
 
-                            // Text(
-                            //   // ignore: invalid_use_of_protected_member
-                            //   'Total Job Post (${data.serviceModellist.value.length})',
-                            //   style: kTextStyle.copyWith(
-                            //       color: kNeutralColor,
-                            //       fontWeight: FontWeight.bold
-                            //   ),
-                            // ),
+                              // GridView.count(
+                              //   shrinkWrap: true,
+                              //   physics: const NeverScrollableScrollPhysics(),
+                              //   mainAxisSpacing: 10.0,
+                              //   crossAxisSpacing: 10.0,
+                              //   childAspectRatio: 0.7,
+                              //   crossAxisCount: 2,
+                              //   children: List.generate(
+                              //     data.serviceModellist.length,
+                              //     (index) => ServiceCard(
+                              //         servicedata: data.serviceModellist[index]
+                              //     )
+                              //   )
+                              // ),
 
-                            const SizedBox(height: 15.0),
-
-                            // ListView.builder(
-                            //   itemCount: data.myjobModellist.value.length,
-                            //   shrinkWrap: true,
-                            //   padding: const EdgeInsets.only(bottom: 10.0),
-                            //   physics: const NeverScrollableScrollPhysics(),
-                            //   itemBuilder: (_, i) {
-                            //     return JobCard(jobmodel: data.myjobModellist.value[i],);
-                            //   },
-                            // ),
-
-                            ListView.builder(
-                              itemCount: data.serviceModellist.value.length,
-                              shrinkWrap: true,
-                              padding: const EdgeInsets.only(bottom: 10.0),
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemBuilder: (_, i) {
-
-                                return ServiceCard(
-                                  servicedata: data.serviceModellist.value[i],
-                                );
-
-                              },
-                            ),
-                            
-
-                          ],
+                              ListView.builder(
+                                itemCount: data.serviceModellist.value.length,
+                                shrinkWrap: true,
+                                padding: const EdgeInsets.only(bottom: 10.0),
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemBuilder: (_, i) {
+                                  return ServiceCard(
+                                    servicedata:
+                                    data.serviceModellist.value[i],
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            );
-          }
-        ),
+                ],
+              );
+            }),
       ),
     );
   }

@@ -7,25 +7,31 @@ class JobModel {
   String postby;
   String title;
   String desc;
+  String paymentrate;
+  String estduration;
   String category;
+  String subcategory;
   String status;
   String datestr;
   Timestamp date;
-  String id;
   LatLng location;
+  String address;
 
 
   JobModel({
     required this.postby,
     required this.postid,
     required this.category,
+    required this.subcategory,
     required this.date,
     required this.datestr,
     required this.desc,
-    required this.id,
+    required this.estduration,
     required this.status,
+    required this.paymentrate,
     required this.title,
     required this.location,
+    required this.address,
   });
 
 }

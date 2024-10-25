@@ -3,12 +3,13 @@ import 'package:contractus/controller/datacontroller.dart';
 import 'package:contractus/controller/datasettercontroller.dart';
 import 'package:contractus/controller/mapcontroller.dart';
 import 'package:contractus/models/service.dart';
-import 'package:contractus/screen/client%20screen/client%20service%20details/client_service_map.dart';
+import 'package:contractus/screen/mapscreens/client_service_map.dart';
+import 'package:contractus/screen/widgets/custom_buttons/customformfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
-import 'package:contractus/screen/widgets/button_global.dart';
+import 'package:contractus/screen/widgets/custom_buttons/button_global.dart';
 import 'package:get/get.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:pinput/pinput.dart';
@@ -17,7 +18,9 @@ import '../../../controller/authcontroller.dart';
 import '../../../controller/imagecontroller.dart';
 import '../../../models/categorymodel.dart';
 import '../../../models/imageModel.dart';
+import '../../mapscreens/seller_service_map.dart';
 import '../../widgets/constant.dart';
+
 class CreateNewJobPost extends StatefulWidget {
   const CreateNewJobPost({Key? key}) : super(key: key);
 
@@ -27,15 +30,15 @@ class CreateNewJobPost extends StatefulWidget {
 
 final _formKey = GlobalKey<FormState>();
 TextEditingController pricenumber = TextEditingController();
+TextEditingController payRate = TextEditingController();
+
 TextEditingController description = TextEditingController();
 String selectedCategory = '';
 TextEditingController title = TextEditingController();
 String selectedDeliveryTimeList = '';
-
-
+String selectedEstimatedDurationList = '';
 
 class _CreateNewJobPostState extends State<CreateNewJobPost> {
-
   int currentIndexPage = 0;
   double percent = 33.3;
 
@@ -108,22 +111,18 @@ class _CreateNewJobPostState extends State<CreateNewJobPost> {
     );
   }
 
-
   DataSetterController dataSetterController = Get.put(DataSetterController());
-
 
   //__________DeliveryTime________________________________________________________
   DropdownButton<String> getDeliveryTime() {
     List<DropdownMenuItem<String>> dropDownItems = [];
     for (String des in deliveryTimeList) {
-
       var item = DropdownMenuItem(
         value: des,
         child: Text(des),
       );
 
       dropDownItems.add(item);
-
     }
     return DropdownButton(
       icon: const Icon(FeatherIcons.chevronDown),
@@ -132,12 +131,38 @@ class _CreateNewJobPostState extends State<CreateNewJobPost> {
       style: kTextStyle.copyWith(color: kSubTitleColor),
       onChanged: (String? value) {
         setState(() {
-          selectedDeliveryTimeList = value ??'';
+          selectedDeliveryTimeList = value ?? '';
         });
       },
     );
   }
 
+  //__________Estimated Duration________________________________________________________
+  DropdownButton<String> getEstimatedDuration() {
+    List<DropdownMenuItem<String>> dropDownItems = [];
+    for (String des in estimatedDuration) {
+
+      var item = DropdownMenuItem(
+        value: des,
+        child: Text(des),
+      );
+
+      dropDownItems.add(item);
+    }
+    return DropdownButton(
+      icon: const Icon(FeatherIcons.chevronDown),
+      items: dropDownItems,
+      value: selectedEstimatedDurationList.isEmpty
+          ? null
+          : selectedEstimatedDurationList,
+      style: kTextStyle.copyWith(color: kSubTitleColor),
+      onChanged: (String? value) {
+        setState(() {
+          selectedEstimatedDurationList = value ?? '';
+        });
+      },
+    );
+  }
 
   @override
   void initState() {
@@ -159,254 +184,173 @@ class _CreateNewJobPostState extends State<CreateNewJobPost> {
         ),
         centerTitle: true,
       ),
-      
       body: Padding(
-              padding: const EdgeInsets.only(top: 15.0),
-              child: Container(
-      width: context.widthTransformer(),
-      padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-      decoration: const BoxDecoration(
-        color: kWhite,
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(30.0),
-          topLeft: Radius.circular(30.0),
+        padding: const EdgeInsets.only(top: 15.0),
+        child: Container(
+          width: context.widthTransformer(),
+          padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+          decoration: const BoxDecoration(
+            color: kWhite,
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(30.0),
+              topLeft: Radius.circular(30.0),
+            ),
+          ),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 20.0),
+                Text(
+                  'Overview',
+                  style: kTextStyle.copyWith(
+                      color: kNeutralColor, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 15.0),
+                Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 5.0),
+                          TextFormField(
+                            keyboardType: TextInputType.text,
+                            cursorColor: kNeutralColor,
+                            textInputAction: TextInputAction.next,
+                            controller: title,
+                            validator: (String? value) {
+                              if (value!.isEmpty) {
+                                return 'Please enter your title';
+                              } else {
+                                return null;
+                              }
+                            },
+                            decoration: kInputDecoration.copyWith(
+                              labelText: 'Job Title',
+                              labelStyle: kTextStyle.copyWith(color: kNeutralColor),
+                              hintText: 'Enter job title',
+                              hintStyle: kTextStyle.copyWith(color: kSubTitleColor),
+                              focusColor: kNeutralColor,
+                              border: const OutlineInputBorder(),
+                            ),
+                          ),
+                          const SizedBox(height: 20.0),
+                          CustomFormField(title: 'Choose a Category',child:getCategory()),
+                          const SizedBox(height: 20.0),
+                          CustomFormField(title: 'Subcategory',child:getSubCategory()),
+                          const SizedBox(height: 20.0),
+                          CustomFormField(title: 'Delivery Time',child:getDeliveryTime()),
+                          const SizedBox(height: 20.0),
+                          CustomFormField(title:'Estimated Duration',child: getEstimatedDuration()),
+                          const SizedBox(height: 20.0),
+                          TextFormField(
+                            keyboardType: TextInputType.number,
+                            cursorColor: kNeutralColor,
+                            textInputAction: TextInputAction.next,
+                            controller: payRate,
+                            validator: (String? value) {
+                              if (value!.isEmpty) {
+                                return 'Please enter the payment rate';
+                              } else {
+                                return null;
+                              }
+                            },
+                            decoration: kInputDecoration.copyWith(
+                              labelText: 'Payment Rate',
+                              labelStyle: kTextStyle.copyWith(color: kNeutralColor),
+                              hintText: ' Price / Time',
+                              hintStyle: kTextStyle.copyWith(color: kSubTitleColor),
+                              focusColor: kNeutralColor,
+                              border: const OutlineInputBorder(),
+                            ),
+                          ),
+
+                          const SizedBox(height: 20.0),
+                          TextFormField(
+                            keyboardType: TextInputType.multiline,
+                            cursorColor: kNeutralColor,
+                            textInputAction: TextInputAction.next,
+                            maxLines: 3,
+                            controller: description,
+                            validator: (String? value) {
+                              if (value!.isEmpty) {
+                                return 'Please describe the service';
+                              } else {
+                                return null;
+                              }
+                            },
+                            decoration: kInputDecoration.copyWith(
+                              labelText: 'Describe The Service',
+                              labelStyle: kTextStyle.copyWith(color: kNeutralColor),
+                              hintText: 'I need a ui ux designer...',
+                              hintStyle: kTextStyle.copyWith(color: kSubTitleColor),
+                              focusColor: kNeutralColor,
+                              floatingLabelBehavior: FloatingLabelBehavior.always,
+                              border: const OutlineInputBorder(),
+                            ),
+                          ),
+
+                          const SizedBox(height: 20.0),
+                          TextFormField(
+                            onTap: () async {
+                              ImageModel imagedata =
+                              await imagectrl.getImageGallery();
+                              setState(() {
+                                image = imagedata.file!.path;
+                              });
+                            },
+                            // enabled: false,
+                            showCursor: false,
+                            readOnly: true,
+                            keyboardType: TextInputType.url,
+                            cursorColor: kNeutralColor,
+                            textInputAction: TextInputAction.next,
+                            decoration: kInputDecoration.copyWith(
+                              labelText: image == ''
+                                  ? 'Upload file and image'
+                                  : 'Image Uploaded',
+                              labelStyle: kTextStyle.copyWith(color: kNeutralColor),
+                              hintText: image == ''
+                                  ? 'Upload file and image'
+                                  : 'Image Uploaded',
+                              hintStyle: kTextStyle.copyWith(color: kSubTitleColor),
+                              focusColor: kNeutralColor,
+                              border: const OutlineInputBorder(),
+                              suffixIcon: const Icon(FeatherIcons.upload,
+                                  color: kLightNeutralColor),
+                            ),
+                            // validator: (String? value) {
+                            //   if (value!.isEmpty) {
+                            //     return 'Please upload file and image';
+                            //   } else {
+                            //     return null;
+                            //   }
+                            // },
+                          ),
+
+                          const SizedBox(height: 10.0),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height / 1.6,
+                            child: SellerServiceMap(
+                              selectmap: true,
+                            ),
+                          ),
+                          Text(
+                            errortest,
+                            style: kTextStyle.copyWith(
+                                color: Colors.red, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                        ],
+                      ),
+                    )),
+              ],
+            ),
+          ),
         ),
       ),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20.0),
-            Text(
-              'Overview',
-              style: kTextStyle.copyWith(
-                  color: kNeutralColor, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 15.0),
-            Expanded(
-              child:
-                  SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 5.0),
-                        TextFormField(
-                          keyboardType: TextInputType.text,
-                          cursorColor: kNeutralColor,
-                          textInputAction: TextInputAction.next,
-                          controller: title,
-                          validator: (String? value) {
-                            if (value!.isEmpty) {
-                              return 'Please enter your title';
-                            } else {
-                              return null;
-                            }
-                          },
-                          decoration: kInputDecoration.copyWith(
-                            labelText: 'Job Title',
-                            labelStyle: kTextStyle.copyWith(color: kNeutralColor),
-                            hintText: 'Enter job title',
-                            hintStyle: kTextStyle.copyWith(color: kSubTitleColor),
-                            focusColor: kNeutralColor,
-                            border: const OutlineInputBorder(),
-                          ),
-                        ),
-                        const SizedBox(height: 20.0),
-                        FormField(
-                          builder: (FormFieldState<dynamic> field) {
-                            return InputDecorator(
-                              decoration: kInputDecoration.copyWith(
-                                enabledBorder: const OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(8.0),
-                                  ),
-                                  borderSide: BorderSide(
-                                      color: kBorderColorTextField, width: 2),
-                                ),
-                                contentPadding: const EdgeInsets.all(7.0),
-                                floatingLabelBehavior: FloatingLabelBehavior.always,
-                                labelText: 'Choose a Category',
-                                labelStyle: kTextStyle.copyWith(color: kNeutralColor),
-                              ),
-                              child:
-                              DropdownButtonHideUnderline(child: getCategory()),
-                            );
-
-                          },
-                          // validator: (String? value) {
-                          //   if (selectedCategory.isEmpty) {
-                          //     return 'Please enter category';
-                          //   } else {
-                          //     return null;
-                          //   }
-                          // },
-                        ),
-                        const SizedBox(height: 20.0),
-                        FormField(
-                          builder: (FormFieldState<dynamic> field) {
-                            return InputDecorator(
-                              decoration: kInputDecoration.copyWith(
-                                enabledBorder: const OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(8.0),
-                                  ),
-                                  borderSide: BorderSide(
-                                      color: kBorderColorTextField,
-                                      width: 2),
-                                ),
-                                contentPadding: const EdgeInsets.all(7.0),
-                                floatingLabelBehavior:
-                                FloatingLabelBehavior.always,
-                                labelText: 'Subcategory',
-                                labelStyle: kTextStyle.copyWith(
-                                    color: kNeutralColor,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              child: DropdownButtonHideUnderline(
-                                  child: getSubCategory()),
-                            );
-                          },
-                          // validator: (String? value) {
-                          //   if (selectedSubCategory.isEmpty) {
-                          //     return 'Please enter subcategory';
-                          //   } else {
-                          //     return null;
-                          //   }
-                          // },
-                        ),
-                        const SizedBox(height: 20.0),
-                        FormField(
-                          builder: (FormFieldState<dynamic> field) {
-                            return InputDecorator(
-                              decoration: kInputDecoration.copyWith(
-                                enabledBorder: const OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(8.0),
-                                  ),
-                                  borderSide: BorderSide(
-                                      color: kBorderColorTextField, width: 2),
-                                ),
-                                contentPadding: const EdgeInsets.all(7.0),
-                                floatingLabelBehavior: FloatingLabelBehavior.always,
-                                labelText: 'Delivery Time',
-                                labelStyle: kTextStyle.copyWith(color: kNeutralColor),
-                              ),
-                              child: DropdownButtonHideUnderline(child: getDeliveryTime()),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 20.0),
-                        TextFormField(
-                          keyboardType: TextInputType.number,
-                          cursorColor: kNeutralColor,
-                          textInputAction: TextInputAction.next,
-                          controller: pricenumber,
-                          validator: (String? value) {
-                            if (value!.isEmpty) {
-                              return 'Please enter your price';
-                            } else {
-                              return null;
-                            }
-                          },
-                          decoration: kInputDecoration.copyWith(
-                            labelText: 'Service Price',
-                            labelStyle: kTextStyle.copyWith(color: kNeutralColor),
-                            hintText: '\$ 5 minimum',
-                            hintStyle: kTextStyle.copyWith(color: kSubTitleColor),
-                            focusColor: kNeutralColor,
-                            border: const OutlineInputBorder(),
-                          ),
-                        ),
-                        const SizedBox(height: 20.0),
-                        TextFormField(
-                          keyboardType: TextInputType.multiline,
-                          cursorColor: kNeutralColor,
-                          textInputAction: TextInputAction.next,
-                          maxLines: 3,
-                          controller: description,
-                          validator: (String? value) {
-                            if (value!.isEmpty) {
-                              return 'Please describe the service';
-                            } else {
-                              return null;
-                            }
-                          },
-                          decoration: kInputDecoration.copyWith(
-                            labelText: 'Describe The Service',
-                            labelStyle: kTextStyle.copyWith(color: kNeutralColor),
-                            hintText: 'I need a ui ux designer...',
-                            hintStyle: kTextStyle.copyWith(color: kSubTitleColor),
-                            focusColor: kNeutralColor,
-                            floatingLabelBehavior: FloatingLabelBehavior.always,
-                            border: const OutlineInputBorder(),
-                          ),
-                        ),
-                        const SizedBox(height: 20.0),
-                        TextFormField(
-                          onTap: () async {
-                            ImageModel imagedata =
-                            await imagectrl.getImageGallery();
-                            setState(() {
-                              image = imagedata.file!.path;
-                            });
-                          },
-                          // enabled: false,
-                          showCursor: false,
-                          readOnly: true,
-                          keyboardType: TextInputType.url,
-                          cursorColor: kNeutralColor,
-                          textInputAction: TextInputAction.next,
-                          decoration: kInputDecoration.copyWith(
-                            labelText: image == ''
-                                ? 'Upload file and image'
-                                : 'Image Uploaded',
-                            labelStyle:
-                            kTextStyle.copyWith(color: kNeutralColor),
-                            hintText: image == ''
-                                ? 'Upload file and image'
-                                : 'Image Uploaded',
-                            hintStyle: kTextStyle.copyWith(
-                                color: kSubTitleColor),
-                            focusColor: kNeutralColor,
-                            border: const OutlineInputBorder(),
-                            suffixIcon: const Icon(FeatherIcons.upload,
-                                color: kLightNeutralColor),
-                          ),
-                          // validator: (String? value) {
-                          //   if (value!.isEmpty) {
-                          //     return 'Please upload file and image';
-                          //   } else {
-                          //     return null;
-                          //   }
-                          // },
-                        ),
-                        const SizedBox(height: 10.0),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height / 1.6,
-                          child: ClientServiceMap(
-                            selectmap: true,
-                          ),
-                        ),
-
-                        Text(
-                          errortest,
-                          style: kTextStyle.copyWith(
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold),
-                        ),
-
-                        const SizedBox(
-                          height: 10,
-                        ),
-                      ],
-                    ),
-                  )
-            ),
-          ],
-        ),
-      ),
-              ),
-            ),
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(color: kWhite),
         child: ButtonGlobalWithoutIcon(
@@ -417,55 +361,57 @@ class _CreateNewJobPostState extends State<CreateNewJobPost> {
             ),
             onPressed: () {
 
+
               if (_formKey.currentState!.validate()) {
+                //   if (title.text.isEmpty) {
+                //     errortest = 'Enter the Title';
+                //   }else if (description.text.isEmpty){
+                //     errortest = 'Enter the Description';
+                //   }else if (pricenumber.text.isEmpty){
+                //     errortest = 'Enter the Price';
+                //   }else {
 
-              //   if (title.text.isEmpty) {
-              //     errortest = 'Enter the Title';
-              //   }else if (description.text.isEmpty){
-              //     errortest = 'Enter the Description';
-              //   }else if (pricenumber.text.isEmpty){
-              //     errortest = 'Enter the Price';
-              //   }else {
-
-                _formKey.currentState!.save();  // Save the form fields
+                _formKey.currentState!.save(); // Save the form fields
                 // add job to database
                 Timestamp timestamp = Timestamp.now();
                 String dateString = timestamp.toDate().toString();
 
-                print('submit ' + authy.authData.value!.id);
+                print('submit ${authy.authData.value!.id}');
 
-                  dataSetterController.addnewjob(
-                    postby: authy.authData.value!.id,
-                    category: selectedCategory,
-                    date: timestamp,
-                    datestr: dateString,
-                    desc: description.text,
-                    status: 'pending',
-                    title: title.text,
-                    deliveryTime: selectedDeliveryTimeList,
-                    price: pricenumber.text,
-                    subcategory: selectedSubCategory,
-                    location: mapctrl.pointlocation,
-                    address: mapctrl.address!,
-                    imageurl: image,
-                  );
+                dataSetterController.addnewjob(
+                  postby: authy.authData.value!.id,
+                  category: selectedCategory,
+                  date: timestamp,
+                  datestr: dateString,
+                  desc: description.text,
+                  status: 'pending',
+                  title: title.text,
+                  deliveryTime: selectedDeliveryTimeList,
+                  estimatedDuration: selectedEstimatedDurationList,
+                  // price: pricenumber.text,
+                  payRate: payRate.text,
+                  subcategory: selectedSubCategory,
+                  location: mapctrl.pointlocation,
+                  address: mapctrl.address!,
+                  imageurl: image,
+                );
 
                 description.setText('');
                 pricenumber.setText('');
+                payRate.setText('');
                 title.setText('');
                 selectedSubCategory = '';
                 selectedCategory = '';
                 selectedDeliveryTimeList = '';
+                selectedEstimatedDurationList = '';
 
-                  Get.back();
+                Get.back();
+              }
 
-                }
-
-                setState(() {});
-                // const JobPost().launch(context);
+              setState(() {});
+              // const JobPost().launch(context);
             },
             buttonTextColor: kWhite),
-    
       ),
     );
   }

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:contractus/screen/seller%20screen/seller%20home/seller_service_map.dart';
+import 'package:contractus/screen/mapscreens/seller_service_map.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -8,7 +8,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'constant.dart';
+import '../constant.dart';
 
 class MapButton extends StatefulWidget {
   const MapButton({super.key});
@@ -21,19 +21,25 @@ class _MapButtonState extends State<MapButton> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
-  CameraPosition _kGooglePlex = const CameraPosition(
+  CameraPosition kGooglePlex = const CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
     zoom: 5.4746,
   );
 
   getinitiallocation() async {
-    // Geolocator.hashCode
+
+    LocationPermission permit = await Geolocator.checkPermission();
+    if(permit == LocationPermission.denied){
+      Geolocator.requestPermission();
+    }
+
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
 
+
     if (mounted) {
       setState(() {
-        _kGooglePlex = CameraPosition(
+        kGooglePlex = CameraPosition(
           target: LatLng(position.latitude, position.longitude),
           zoom: 3.0,
         );
@@ -76,7 +82,7 @@ class _MapButtonState extends State<MapButton> {
             ),
             child: GoogleMap(
               mapType: MapType.normal,
-              initialCameraPosition: _kGooglePlex,
+              initialCameraPosition: kGooglePlex,
               zoomControlsEnabled: false,
               onMapCreated: (GoogleMapController controller) {
                 _controller.complete(controller);

@@ -1,13 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:contractus/controller/authcontroller.dart';
+import 'package:contractus/models/auth_data.dart';
 import 'package:contractus/models/categorymodel.dart';
+import 'package:contractus/models/contract.dart';
 import 'package:contractus/models/sellermodels/ordermodel.dart';
+import 'package:contractus/screen/widgets/constant.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../models/Seller.dart';
-import '../models/category.dart';
 import '../models/job_model.dart';
 import '../models/sellermodels/earnings.dart';
 import '../models/sellermodels/performance.dart';
@@ -117,11 +121,14 @@ class DataController extends GetxController {
   ];
 
   late Seller seller;
+
   RxList<Seller> sellerlist = <Seller>[].obs;
 
   RxList<ServiceModel> serviceModellist = <ServiceModel>[].obs;
   RxList<ServiceModel> serviceModelfilteredlist = <ServiceModel>[].obs;
   RxList<ServiceModel> myserviceModellist = <ServiceModel>[].obs;
+
+  RxList<ContractModel> contractlist = <ContractModel>[].obs;
 
   RxList<JobModel> jobModellist = <JobModel>[].obs;
 
@@ -131,7 +138,16 @@ class DataController extends GetxController {
 
   late ServiceModel serviceModel;
 
-  Rxn<SellerstatModel> sellerstats = Rxn<SellerstatModel>();
+  SellerstatModel sellerstats = SellerstatModel(
+      statisticModel: StatisticModel(impressions: 0, interaction: 0, reachedout: 0),
+      earningModel: EarningModel(
+          activeorders: 0.0,
+          currentbalance: 0.0,
+          totalearning: 0.0,
+          withdrawearning: 0.0),
+      performanceModel: PerformanceModel(
+          ontimedelivery: '', orderscomplete: '', positiverating: '', totalgig: '')
+  );
 
   EarningModel earningModel = EarningModel(
       activeorders: 0.0,
@@ -139,36 +155,56 @@ class DataController extends GetxController {
       totalearning: 0.0,
       withdrawearning: 0.0);
 
+  Auth_Controller authy = Get.put(Auth_Controller());
+
   PerformanceModel performanceModel = PerformanceModel(
       ontimedelivery: '', orderscomplete: '', positiverating: '', totalgig: '');
 
   StatisticModel statisticModel =
-  StatisticModel(impressions: 0, interaction: 0, reachedout: 0);
+      StatisticModel(impressions: 0, interaction: 0, reachedout: 0);
 
   FirebaseFirestore fire = FirebaseFirestore.instance;
+  FirebaseAuth fireauth = FirebaseAuth.instance;
 
   @override
   void onInit() {
     // TODO: implement onInit
     super.onInit();
     getSellerListData();
-    getCategoryListData();
+    // getCategoryListData();
     getServiceListData();
-    getmyServiceListData('xSpMYGibU67gPjQkcF6x');
-    getmyOrderListData('xSpMYGibU67gPjQkcF6x');
-    myJoblistData('ItrqyV310X2R4Jhqdh2D');
-    getSellerStats('lGYqdVhFaT08pZiVfL6i');
+    joblistData();
   }
 
-  void showloading(bool load){
+  void loadalldata() {
+    if (authy.signedin.value) {
+      if (authy.authData.value!.role == 'seller') {
+        if (authy.signedin.value) {
+          joblistData();
+
+          if (authy.authData.value!.role == 'seller') {
+            getmyServiceListData(authy.authData.value!.id);
+          } else {
+            myJoblistData(authy.authData.value!.id);
+          }
+        }
+        // getmyOrderListData('xSpMYGibU67gPjQkcF6x');
+      }
+    }
+    update();
+  }
+
+  void showloading(bool load) {
     loading.value = load;
     update();
   }
 
   //Seller
   getSellerData(id) async {
+
     showloading(true);
-    final tempseller = await fire.collection('sellers').doc(id).get();
+
+    final tempseller = await fire.collection('users').doc(id).get();
 
     seller = Seller(
         id: tempseller['id'],
@@ -177,13 +213,19 @@ class DataController extends GetxController {
         level: tempseller['level'],
         rating: tempseller['rating'],
         ratingcount: tempseller['ratingcount']);
+
     showloading(false);
+
     return seller;
+
   }
 
   getSellerListData() async {
+
     showloading(true);
+
     final collection = FirebaseFirestore.instance.collection('sellers');
+
     final querySnapshot = await collection.get();
 
     List<Map<String, dynamic>> dataList = [];
@@ -197,16 +239,17 @@ class DataController extends GetxController {
     print('Data collection is completed');
 
     for (var element in dataList) {
-      print('Adding data : ' + element['id']);
+      // print('Adding data : ' + element['id']);
 
       sellerlist.add(Seller(
         id: element['id'],
         name: element['name'],
         image: element['image'],
         level: element['level'],
-        rating: element['rating'],
-        ratingcount: element['ratingcount'],
+        rating: element['rating'] ?? '',
+        ratingcount: element['ratingcount'] ?? '',
       ));
+
     }
     showloading(false);
     update();
@@ -298,29 +341,18 @@ class DataController extends GetxController {
         name: tempService['name'],
         ratingcount: tempService['ratingcount'],
         details: tempService['details'],
-        basic: PlansModel(
-            price: basictempService['price'],
-            deliverydays: basictempService['delivery'],
-            extra: {},
-            revisions: ''),
-        standard: PlansModel(
-            price: standardtempService['price'],
-            deliverydays: standardtempService['delivery'],
-            extra: {},
-            revisions: ''),
-        premium: PlansModel(
-            price: premiumtempService['price'],
-            deliverydays: premiumtempService['delivery'],
-            extra: {},
-            revisions: ''),
         location: LatLng(tempService['lat'], tempService['long']),
-        address: tempService['address']);
+        address: tempService['address'],
+        category: tempService['selectedCategory'],
+        subcategory: tempService['subcategory']);
     showloading(false);
     return serviceModel;
   }
 
   getServiceListData() async {
+
     showloading(true);
+
     serviceModellist.value.clear();
 
     final collection = FirebaseFirestore.instance.collection('services');
@@ -334,89 +366,44 @@ class DataController extends GetxController {
     }
 
     for (var element in dataList) {
-      final basictempService = await fire
-          .collection('services')
-          .doc(element['postid'])
-          .collection('basic')
-          .doc(element['postid'])
-          .get();
 
-      final standardtempService = await fire
-          .collection('services')
-          .doc(element['postid'])
-          .collection('standard')
-          .doc(element['postid'])
-          .get();
-
-      final premiumtempService = await fire
-          .collection('services')
-          .doc(element['postid'])
-          .collection('premium')
-          .doc(element['postid'])
-          .get();
+      print('get service list: ${element['title']}');
 
       serviceModellist.value.add(
-          ServiceModel(
-              imageurls: element['imagelist'],
-              postedby: element['postedby'],
-              postid: element['postid'],
-              title: element['title'],
-              rating: element['rating'],
-              level: element['level'],
-              image: element['image'],
-              price: element['price'],
-              favorite: false,
-              name: element['name'],
-              ratingcount: element['ratingcount'],
-              details: element['details'],
-              basic: PlansModel(
-                  price: basictempService['price'],
-                  deliverydays: basictempService['delivery'],
-                  extra: {},
-                  revisions: ''),
-              standard: PlansModel(
-                  price: standardtempService['price'],
-                  deliverydays: standardtempService['delivery'],
-                  extra: {},
-                  revisions: ''),
-              premium: PlansModel(
-                  price: premiumtempService['price'],
-                  deliverydays: premiumtempService['delivery'],
-                  extra: {},
-                  revisions: ''),
-              location: LatLng(element['lat'], element['long']),
-              address: element['address']));
+        ServiceModel(
+          imageurls: element['imagelist'],
+          postedby: element['postedby'],
+          postid: element['postid'],
+          title: element['title'],
+          rating: element['rating'],
+          level: element['level'],
+          image: element['image'],
+          price: element['price'],
+          favorite: false,
+          name: element['name'] ?? '',
+          ratingcount: element['ratingcount'] ?? '',
+          details: element['details'] ?? '',
+          location: LatLng(
+            element['lat']?.toDouble() ?? 0.0,
+            element['lat']?.toDouble() ?? 0.0,
+          ),
+          address: element['address'],
+            category: element['selectedCategory'],
+            subcategory: element['subcategory']
+        ),
+      );
+
     }
 
     update();
 
-    // ratingcount
-    // msg.docs.forEach((element) async {
-    //
-    //   final id = await element.data()['id'];
-    //   final rating = await element.data()['id'];
-    //   final level = await element.data()['id'];
-    //   final image = await element.data()['id'];
-    //   final price = await element.data()['id'];
-    //   final name = await element.data()['id'];
-    //   final ratingcount = await element.data()['id'];
-    //
-    //   serviceModellist.add(
-    //       ServiceModel(
-    //         title: id, rating: rating,
-    //         level: level, image: image,
-    //         price: price, favorite: false,
-    //         name: name, ratingcount: ratingcount,
-    //   ));
-    //
-    // });
-
     showloading(false);
 
-    return serviceModellist;
+    return serviceModellist.value;
   }
 
-  Future<List<ServiceModel>> getFilteredServiceListData({
+  Future<List<ServiceModel>>
+  getFilteredServiceListData({
     required FilterType filterType,
     String? category,
     double? minRating,
@@ -425,31 +412,30 @@ class DataController extends GetxController {
     LatLng? location, // Optional filter by location (requires GeoFirestore)
     required SortBy sortBy,
   }) async {
-
     final collection = FirebaseFirestore.instance.collection('services');
 
     Query query = collection;
 
     switch (filterType) {
       case FilterType.all:
-      // No filtering, use the original query
+        // No filtering, use the original query
         break;
       case FilterType.byCategory:
         if (category != null) {
-          query = query.where('categoryField', isEqualTo: category);
+          query = query.where('category', isEqualTo: category);
         }
         break;
       case FilterType.byRating:
         if (minRating != null) {
-          query = query.where('ratingField', isGreaterThanOrEqualTo: minRating);
+          query = query.where('rating', isGreaterThanOrEqualTo: minRating);
         }
         break;
       case FilterType.byPrice:
         if (minPrice != null) {
-          query = query.where('priceField', isGreaterThanOrEqualTo: minPrice);
+          query = query.where('price', isGreaterThanOrEqualTo: minPrice);
         }
         if (maxPrice != null) {
-          query = query.where('priceField', isLessThanOrEqualTo: maxPrice);
+          query = query.where('price', isLessThanOrEqualTo: maxPrice);
         }
         break;
     }
@@ -470,7 +456,7 @@ class DataController extends GetxController {
 
     switch (sortBy) {
       case SortBy.none:
-      // No sorting
+        // No sorting
         break;
       case SortBy.priceAscending:
         query = query.orderBy('priceField', descending: false);
@@ -488,29 +474,7 @@ class DataController extends GetxController {
     RxList<ServiceModel> newserviceModelList = <ServiceModel>[].obs;
 
     for (var doc in querySnapshot.docs) {
-
       final element = doc.data() as Map<String, dynamic>;
-
-      final basictempService = await fire
-          .collection('services')
-          .doc(element['postid'])
-          .collection('basic')
-          .doc(element['postid'])
-          .get();
-
-      final standardtempService = await fire
-          .collection('services')
-          .doc(element['postid'])
-          .collection('basic')
-          .doc(element['postid'])
-          .get();
-
-      final premiumtempService = await fire
-          .collection('services')
-          .doc(element['postid'])
-          .collection('basic')
-          .doc(element['postid'])
-          .get();
 
       newserviceModelList.value.add(ServiceModel(
         postedby: element['postedby'],
@@ -524,27 +488,11 @@ class DataController extends GetxController {
         name: element['name'],
         ratingcount: element['ratingcount'],
         details: element['details'],
-        basic: PlansModel(
-          price: basictempService['price'],
-          deliverydays: basictempService['delivery'],
-          extra: {},
-          revisions: '',
-        ),
-        standard: PlansModel(
-          price: standardtempService['price'],
-          deliverydays: standardtempService['delivery'],
-          extra: {},
-          revisions: '',
-        ),
-        premium: PlansModel(
-          price: premiumtempService['price'],
-          deliverydays: premiumtempService['delivery'],
-          extra: {},
-          revisions: '',
-        ),
         location: LatLng(element['lat'], element['long']),
         address: element['address'],
         imageurls: element['imagelist'],
+          category: element['selectedCategory'],
+          subcategory: element['subcategory']
       ));
     }
 
@@ -553,14 +501,14 @@ class DataController extends GetxController {
     update();
 
     return newserviceModelList;
-
   }
 
   getmyServiceListData(id) async {
     showloading(true);
+
     final collection = FirebaseFirestore.instance
         .collection('services')
-        .where('id', isEqualTo: id);
+        .where('postedby', isEqualTo: id);
 
     final querySnapshot = await collection.get();
 
@@ -570,31 +518,7 @@ class DataController extends GetxController {
       dataList.add(doc.data());
     }
 
-    print('Data collection is completed');
-
     for (var element in dataList) {
-      // print('Adding data services : '+ element['id']);
-
-      final basictempService = await fire
-          .collection('services')
-          .doc(element['postid'])
-          .collection('basic')
-          .doc(element['postid'])
-          .get();
-
-      final standardtempService = await fire
-          .collection('services')
-          .doc(element['postid'])
-          .collection('basic')
-          .doc(element['postid'])
-          .get();
-
-      final premiumtempService = await fire
-          .collection('services')
-          .doc(element['postid'])
-          .collection('basic')
-          .doc(element['postid'])
-          .get();
 
       // ignore: invalid_use_of_protected_member
       myserviceModellist.value.add(ServiceModel(
@@ -611,111 +535,91 @@ class DataController extends GetxController {
           name: element['name'],
           ratingcount: element['ratingcount'],
           details: element['details'],
-          basic: PlansModel(
-              price: basictempService['price'],
-              deliverydays: basictempService['delivery'],
-              extra: {},
-              revisions: ''),
-          standard: PlansModel(
-              price: standardtempService['price'],
-              deliverydays: standardtempService['delivery'],
-              extra: {},
-              revisions: ''),
-          premium: PlansModel(
-              price: premiumtempService['price'],
-              deliverydays: premiumtempService['delivery'],
-              extra: {},
-              revisions: ''),
-          imageurls: element['imagelist']
-      ));
+          imageurls: element['imagelist'],
+          category: element['selectedCategory'],
+          subcategory: element['subcategory'])
+      );
+
     }
     showloading(false);
     update();
   }
 
-  getmyOrderListData(id) async {
+  getmyOrderListData({id,required bool iseller}) async {
 
     showloading(true);
 
-    ordermodel.add(
-      OrderModel(
-          amount: '2000',
-          client: 'Dre',
-          createdAt: Timestamp.now(),
-          datestr: '2013/30/14',
-          deadline: Timestamp.now(),
-          duration: '3',
-          id: '3io4h45',
-          seller: 'Doctor',
-          status: 'Active',
-          title: 'New Project Bl',
-          postbyid: 'sfdfefersfad'),
-    );
-    ordermodel.add(
-      OrderModel(
-          amount: '2000',
-          client: 'Dre',
-          createdAt: Timestamp.now(),
-          datestr: '2013/30/34',
-          deadline: Timestamp.now(),
-          duration: '3',
-          id: '3lfjkld',
-          seller: 'Doctor',
-          status: 'Pending',
-          title: 'New Proct Bl',
-          postbyid: '83948'),
-    );
+    ordermodel.value.clear();
 
-    final collection = FirebaseFirestore.instance
-        .collection('orders')
+    var collection;
+
+    if(iseller){
+      print('Sellerid : ' + id);
+      collection = FirebaseFirestore.instance
+        .collection('contracts')
+        .where('sellerid', isEqualTo: id);
+
+
+    }else{
+      collection = FirebaseFirestore.instance
+        .collection('contracts')
         .where('postbyid', isEqualTo: id);
+      print('postbyid : ' + id);
+    }
 
     final querySnapshot = await collection.get();
 
     List<Map<String, dynamic>> dataList = [];
 
     for (var doc in querySnapshot.docs) {
-      print('This is the date required');
-
-      dataList.add(doc.data() as Map<String, dynamic>);
+      dataList.add(doc.data());
     }
 
-    print('Data collection is completed');
-
     for (var element in dataList) {
-      print('Adding data services : ' + element['id']);
 
       // ignore: invalid_use_of_protected_member
-      ordermodel.value.add(OrderModel(
+      ordermodel.value.add(
+          OrderModel(
+        description: element['description'],
         title: element['title'],
         deadline: element['deadline'],
         datestr: element['datestr'],
         seller: element['seller'],
         amount: element['amount'],
         duration: element['duration'],
-        id: element['id'],
+        postid: element['id'],
         createdAt: element['createdAt'],
         status: element['status'],
         postbyid: element['postbyid'],
         client: element['client'],
+        sellerid: element['sellerid'],
+        clientid: element['clientid'],
+        invoicedate: element['invoicedate'],
+        contractid: element['contractid'],
+        category: element['category'],
+        subcategory: element['subcategory'],
       ));
+
     }
+
     showloading(false);
+
     update();
+
   }
 
   myJoblistData(id) async {
+
     showloading(true);
+
     final collection = FirebaseFirestore.instance
         .collection('jobs')
-        .where('id', isEqualTo: id);
+        .where('postby', isEqualTo: id);
     final querySnapshot = await collection.get();
 
     List<Map<String, dynamic>> dataList = [];
 
     for (var doc in querySnapshot.docs) {
-      print('This is the date required');
-
       dataList.add(doc.data() as Map<String, dynamic>);
     }
 
@@ -725,16 +629,19 @@ class DataController extends GetxController {
       // print('Adding data : ' + element['id']);
 
       myjobModellist.value.add(JobModel(
-        postby: '',
-        postid: '',
+        postby: element['postby'],
+        postid: element['postid'],
+        paymentrate: element['payment rate'],
+        location: LatLng(element['lat'], element['long']),
+        estduration: element['estimated duration'],
         title: element['title'],
         desc: element['desc'],
-        id: element['id'],
         status: element['status'],
         date: element['date'],
         datestr: element['datestr'],
         category: element['category'],
-        location: LatLng(0.0, 0.0),
+        subcategory: '', address: '',
+
         // img: element['img'],
       ));
     }
@@ -742,107 +649,40 @@ class DataController extends GetxController {
     update();
   }
 
-  getSellerStats(id) async {
-    // final collectionperformance = FirebaseFirestore.instance
-    //     .collection('users')
-    //     .doc(id).collection('performance');
-    //
-    // final collectionearnings = FirebaseFirestore.instance
-    //     .collection('users')
-    //     .doc(id).collection('earning');
-    //
-    // final collectionstatistics = FirebaseFirestore.instance
-    //     .collection('users')
-    //     .doc(id).collection('statistics');
-    //
-    // final querySnapshotp = await collectionperformance.get();
-    // final querySnapshote = await collectionearnings.get();
-    // final querySnapshots = await collectionstatistics.get();
-    //
-    // List<Map<String, dynamic>> dataList = [];
-    //
-    // for (var element in dataList) {}
-
+  joblistData() async {
     showloading(true);
 
-    final userperformance = await fire
-        .collection('users')
-        .doc(id)
-        .collection('performance')
-        .doc('10/5/2020')
-        .get();
-    final userearning = await fire
-        .collection('users')
-        .doc(id)
-        .collection('earning')
-        .doc('10/5/2020')
-        .get();
-    final userstats = await fire
-        .collection('users')
-        .doc(id)
-        .collection('statistics')
-        .doc('10/5/2020')
-        .get();
+    final collection = FirebaseFirestore.instance.collection('jobs');
+    final querySnapshot = await collection.get();
 
-    // print('Adding data services : '+ element['id']);
-    print('Now collection performance data');
+    List<Map<String, dynamic>> dataList = [];
 
-    if (userperformance.exists) {
-      print('Performance exists');
-
-      performanceModel = PerformanceModel(
-        ontimedelivery: userperformance['ontimedelivery'],
-        orderscomplete: userperformance['orderscomplete'],
-        positiverating: userperformance['positiverating'],
-        totalgig: userperformance['totalgig'],
-      );
-    } else {
-      print('Performance doesn\'t exists');
-
-      performanceModel = PerformanceModel(
-          ontimedelivery: '0',
-          orderscomplete: '0',
-          positiverating: '0.0',
-          totalgig: '0 of 0');
+    for (var doc in querySnapshot.docs) {
+      dataList.add(doc.data() as Map<String, dynamic>);
     }
 
-    if (userearning.exists) {
-      print('Performance Exists');
+    for (var element in dataList) {
+      // print('Adding data : ' + element['desc']);
 
-      earningModel = EarningModel(
-          activeorders: userearning['activeorders'],
-          currentbalance: userearning['currentbalance'],
-          totalearning: userearning['totalearning'],
-          withdrawearning: userearning['withdrawearning']);
-    } else {
-      print('Performance doesn\'t exists');
-
-      earningModel = EarningModel(
-          activeorders: 0.0,
-          currentbalance: 0.0,
-          totalearning: 0.0,
-          withdrawearning: 0.0);
+      jobModellist.value.add(
+          JobModel(
+        postby: element['postby'],
+        postid: element['postid'],
+        paymentrate: element['payment rate'],
+        location: LatLng(element['lat'], element['long']),
+        estduration: element['estimated duration'],
+        title: element['title'],
+        desc: element['desc'] ?? '',
+        status: element['status'],
+        date: element['date'],
+        datestr: element['datestr'],
+        category: element['category'], subcategory: '', address: '',
+        // img: element['img'],
+      ));
     }
-
-    if (userstats.exists) {
-      print('Performance Exists');
-
-      statisticModel = StatisticModel(
-          impressions: userstats['impressions'],
-          interaction: userstats['interaction'],
-          reachedout: userstats['reachedout']);
-    } else {
-      print('Performance doesn\'t exists');
-
-      statisticModel =
-          StatisticModel(impressions: 0.0, interaction: 0.0, reachedout: 0.0);
-    }
-
-    sellerstats.value = SellerstatModel(
-        statisticModel: statisticModel,
-        earningModel: earningModel,
-        performanceModel: performanceModel);
     showloading(false);
     update();
   }
+
+
 }

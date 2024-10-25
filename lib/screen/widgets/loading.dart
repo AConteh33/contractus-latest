@@ -26,7 +26,7 @@ class LoadingWidget extends StatelessWidget {
               child: Center(
                 child: LoadingAnimationWidget.threeArchedCircle(
                   color: kPrimaryColor,
-                  size: 200,
+                  size: 50,
                 ),
               ),
             ): const SizedBox(),

@@ -3,6 +3,7 @@ import 'package:contractus/screen/seller%20screen/seller%20authentication/seller
 import 'package:contractus/screen/widgets/custom_buttons/social_logins.dart';
 import 'package:contractus/screen/widgets/topbars/sellerbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:contractus/controller/authcontroller.dart';
@@ -11,7 +12,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:get/get.dart';
 
-import '../../widgets/button_global.dart';
+import '../../widgets/custom_buttons/button_global.dart';
 import '../../widgets/constant.dart';
 import '../../widgets/icons.dart';
 import '../seller home/seller_home.dart';
@@ -184,18 +185,23 @@ class _SellerLogInState extends State<SellerLogIn> {
                       ),
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          if (_formKey.currentState!.validate()) {
+
                             _formKey.currentState!.save();
+
                             User? user = await authcontroller
                                 .signInWithEmailAndPassword(email, password);
+
                             if (user != null) {
                               // Sign-in successful, navigate to home screen
+                              // Get.back();
+                              // Get.back();
                               Get.offAll(const SellerHome());
                             }
-                          }
+
                         } else {
                           // Show an error message or highlight invalid fields
                         }
+
                       },
                       buttonTextColor: kWhite),
                   const SizedBox(height: 20.0),
@@ -223,7 +229,21 @@ class _SellerLogInState extends State<SellerLogIn> {
                     ],
                   ),
                   const SizedBox(height: 20.0),
-                  const SocialLogins(),
+                  ButtonGlobalWithoutIcon(
+                      buttontext: 'Google Sign in',
+                      buttonDecoration: kButtonDecoration.copyWith(
+                        color: kPrimaryColor,
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      onPressed: () async {
+                        authcontroller.signInWithGoogle();
+                      },
+                      buttonTextColor: kWhite),
+                  GestureDetector(
+                      onTap: (){
+                        authcontroller.signInWithGoogle();
+                      },
+                      child: SocialLogins()),
                   const SizedBox(height: 20.0),
                   Center(
                     child: GestureDetector(

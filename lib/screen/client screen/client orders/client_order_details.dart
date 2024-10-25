@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
-import 'package:contractus/screen/widgets/button_global.dart';
+import 'package:contractus/screen/widgets/custom_buttons/button_global.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:slide_countdown/slide_countdown.dart';
 
@@ -25,7 +25,8 @@ class _ClientOrderDetailsState extends State<ClientOrderDetails> {
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(
-          builder: (BuildContext context, void Function(void Function()) setState) {
+          builder:
+              (BuildContext context, void Function(void Function()) setState) {
             return Dialog(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.0),
@@ -48,7 +49,8 @@ class _ClientOrderDetailsState extends State<ClientOrderDetails> {
         iconTheme: const IconThemeData(color: kNeutralColor),
         title: Text(
           'Order Details',
-          style: kTextStyle.copyWith(color: kNeutralColor, fontWeight: FontWeight.bold),
+          style: kTextStyle.copyWith(
+              color: kNeutralColor, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         actions: [
@@ -64,7 +66,7 @@ class _ClientOrderDetailsState extends State<ClientOrderDetails> {
                       'Message',
                       style: kTextStyle.copyWith(color: kNeutralColor),
                     ).onTap(
-                      () => const ChatScreen().launch(context),
+                      () => ChatScreen().launch(context),
                     ),
                   ],
                 ),
@@ -104,29 +106,40 @@ class _ClientOrderDetailsState extends State<ClientOrderDetails> {
                 buttontext: isSelected == 'Completed' ? 'Re-Order' : 'Cancel',
                 buttonDecoration: kButtonDecoration.copyWith(
                   color: isSelected == 'Completed' ? kPrimaryColor : kWhite,
-                  border: Border.all(color: isSelected == 'Completed' ? Colors.transparent : Colors.red),
+                  border: Border.all(
+                      color: isSelected == 'Completed'
+                          ? Colors.transparent
+                          : Colors.red),
                 ),
                 onPressed: () {
                   setState(() {
-                    isSelected == 'Completed' ? Container() : cancelOrderPopUp();
+                    isSelected == 'Completed'
+                        ? Container()
+                        : cancelOrderPopUp();
                   });
                 },
-                buttonTextColor: isSelected == 'Completed' ? kWhite : Colors.red,
+                buttonTextColor:
+                    isSelected == 'Completed' ? kWhite : Colors.red,
               ),
             ),
             Expanded(
               child: ButtonGlobalWithoutIcon(
-                buttontext: isSelected == 'Completed' ? 'Review' : 'Deliver Work',
+                buttontext:
+                    isSelected == 'Completed' ? 'Review' : 'Deliver Work',
                 buttonDecoration: kButtonDecoration.copyWith(
                   color: isSelected == 'Completed' ? kWhite : kPrimaryColor,
-                  border: Border.all(color: isSelected == 'Completed' ? kPrimaryColor : Colors.transparent),
+                  border: Border.all(
+                      color: isSelected == 'Completed'
+                          ? kPrimaryColor
+                          : Colors.transparent),
                 ),
                 onPressed: () {
                   setState(() {
                     const ClientOrderReview().launch(context);
                   });
                 },
-                buttonTextColor: isSelected == 'Completed' ? kPrimaryColor : kWhite,
+                buttonTextColor:
+                    isSelected == 'Completed' ? kPrimaryColor : kWhite,
               ),
             ),
           ],
@@ -156,7 +169,13 @@ class _ClientOrderDetailsState extends State<ClientOrderDetails> {
                       color: kWhite,
                       borderRadius: BorderRadius.circular(8.0),
                       border: Border.all(color: kBorderColorTextField),
-                      boxShadow: const [BoxShadow(color: kDarkWhite, spreadRadius: 4.0, blurRadius: 4.0, offset: Offset(0, 2))]),
+                      boxShadow: const [
+                        BoxShadow(
+                            color: kDarkWhite,
+                            spreadRadius: 4.0,
+                            blurRadius: 4.0,
+                            offset: Offset(0, 2))
+                      ]),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -164,13 +183,16 @@ class _ClientOrderDetailsState extends State<ClientOrderDetails> {
                         children: [
                           Text(
                             'Order ID #F025E15',
-                            style: kTextStyle.copyWith(color: kNeutralColor, fontWeight: FontWeight.bold),
+                            style: kTextStyle.copyWith(
+                                color: kNeutralColor,
+                                fontWeight: FontWeight.bold),
                           ),
                           const Spacer(),
                           SlideCountdownSeparated(
                             duration: const Duration(days: 3),
                             separatorType: SeparatorType.symbol,
-                            separatorStyle: kTextStyle.copyWith(color: Colors.transparent),
+                            separatorStyle:
+                                kTextStyle.copyWith(color: Colors.transparent),
                             decoration: BoxDecoration(
                               color: kPrimaryColor,
                               borderRadius: BorderRadius.circular(3.0),
@@ -190,11 +212,13 @@ class _ClientOrderDetailsState extends State<ClientOrderDetails> {
                             ),
                             TextSpan(
                               text: '  |  ',
-                              style: kTextStyle.copyWith(color: kLightNeutralColor),
+                              style: kTextStyle.copyWith(
+                                  color: kLightNeutralColor),
                             ),
                             TextSpan(
                               text: '24 Jun 2023',
-                              style: kTextStyle.copyWith(color: kLightNeutralColor),
+                              style: kTextStyle.copyWith(
+                                  color: kLightNeutralColor),
                             ),
                           ],
                         ),
@@ -224,13 +248,15 @@ class _ClientOrderDetailsState extends State<ClientOrderDetails> {
                               children: [
                                 Text(
                                   ':',
-                                  style: kTextStyle.copyWith(color: kSubTitleColor),
+                                  style: kTextStyle.copyWith(
+                                      color: kSubTitleColor),
                                 ),
                                 const SizedBox(width: 10.0),
                                 Flexible(
                                   child: Text(
                                     'Mobile UI UX design or app UI UX design',
-                                    style: kTextStyle.copyWith(color: kSubTitleColor),
+                                    style: kTextStyle.copyWith(
+                                        color: kSubTitleColor),
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 2,
                                   ),
@@ -259,13 +285,15 @@ class _ClientOrderDetailsState extends State<ClientOrderDetails> {
                               children: [
                                 Text(
                                   ':',
-                                  style: kTextStyle.copyWith(color: kSubTitleColor),
+                                  style: kTextStyle.copyWith(
+                                      color: kSubTitleColor),
                                 ),
                                 const SizedBox(width: 10.0),
                                 Flexible(
                                   child: ReadMoreText(
                                     'Lorem ipsum dolor sit amet consectetur. Tortor sapien aliquam amet elit. Quis varius amet grav ida molestie rhoncus. Lorem ipsum dolor sit amet consectetur. Tortor sapien aliquam amet elit. Quis varius amet grav ida molestie rhoncus.',
-                                    style: kTextStyle.copyWith(color: kLightNeutralColor),
+                                    style: kTextStyle.copyWith(
+                                        color: kLightNeutralColor),
                                     trimLines: 3,
                                     colorClickableText: kPrimaryColor,
                                     trimMode: TrimMode.Line,
@@ -297,13 +325,15 @@ class _ClientOrderDetailsState extends State<ClientOrderDetails> {
                               children: [
                                 Text(
                                   ':',
-                                  style: kTextStyle.copyWith(color: kSubTitleColor),
+                                  style: kTextStyle.copyWith(
+                                      color: kSubTitleColor),
                                 ),
                                 const SizedBox(width: 10.0),
                                 Flexible(
                                   child: Text(
                                     '3 Days',
-                                    style: kTextStyle.copyWith(color: kSubTitleColor),
+                                    style: kTextStyle.copyWith(
+                                        color: kSubTitleColor),
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                   ),
@@ -332,13 +362,15 @@ class _ClientOrderDetailsState extends State<ClientOrderDetails> {
                               children: [
                                 Text(
                                   ':',
-                                  style: kTextStyle.copyWith(color: kSubTitleColor),
+                                  style: kTextStyle.copyWith(
+                                      color: kSubTitleColor),
                                 ),
                                 const SizedBox(width: 10.0),
                                 Flexible(
                                   child: Text(
                                     '$currencySign${5.00}',
-                                    style: kTextStyle.copyWith(color: kSubTitleColor),
+                                    style: kTextStyle.copyWith(
+                                        color: kSubTitleColor),
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                   ),
@@ -367,13 +399,15 @@ class _ClientOrderDetailsState extends State<ClientOrderDetails> {
                               children: [
                                 Text(
                                   ':',
-                                  style: kTextStyle.copyWith(color: kSubTitleColor),
+                                  style: kTextStyle.copyWith(
+                                      color: kSubTitleColor),
                                 ),
                                 const SizedBox(width: 10.0),
                                 Flexible(
                                   child: Text(
                                     'Active',
-                                    style: kTextStyle.copyWith(color: kNeutralColor),
+                                    style: kTextStyle.copyWith(
+                                        color: kNeutralColor),
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                   ),
@@ -386,7 +420,8 @@ class _ClientOrderDetailsState extends State<ClientOrderDetails> {
                       const SizedBox(height: 15.0),
                       Text(
                         'Order Details',
-                        style: kTextStyle.copyWith(color: kNeutralColor, fontWeight: FontWeight.bold),
+                        style: kTextStyle.copyWith(
+                            color: kNeutralColor, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8.0),
                       Row(
@@ -407,13 +442,15 @@ class _ClientOrderDetailsState extends State<ClientOrderDetails> {
                               children: [
                                 Text(
                                   ':',
-                                  style: kTextStyle.copyWith(color: kSubTitleColor),
+                                  style: kTextStyle.copyWith(
+                                      color: kSubTitleColor),
                                 ),
                                 const SizedBox(width: 10.0),
                                 Flexible(
                                   child: Text(
                                     'Unlimited Revisions',
-                                    style: kTextStyle.copyWith(color: kSubTitleColor),
+                                    style: kTextStyle.copyWith(
+                                        color: kSubTitleColor),
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                   ),
@@ -442,13 +479,15 @@ class _ClientOrderDetailsState extends State<ClientOrderDetails> {
                               children: [
                                 Text(
                                   ':',
-                                  style: kTextStyle.copyWith(color: kSubTitleColor),
+                                  style: kTextStyle.copyWith(
+                                      color: kSubTitleColor),
                                 ),
                                 const SizedBox(width: 10.0),
                                 Flexible(
                                   child: Text(
                                     'Source file, JPG, PNG, ZIP ',
-                                    style: kTextStyle.copyWith(color: kSubTitleColor),
+                                    style: kTextStyle.copyWith(
+                                        color: kSubTitleColor),
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                   ),
@@ -477,13 +516,15 @@ class _ClientOrderDetailsState extends State<ClientOrderDetails> {
                               children: [
                                 Text(
                                   ':',
-                                  style: kTextStyle.copyWith(color: kSubTitleColor),
+                                  style: kTextStyle.copyWith(
+                                      color: kSubTitleColor),
                                 ),
                                 const SizedBox(width: 10.0),
                                 Flexible(
                                   child: Text(
                                     'High resolution',
-                                    style: kTextStyle.copyWith(color: kSubTitleColor),
+                                    style: kTextStyle.copyWith(
+                                        color: kSubTitleColor),
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                   ),
@@ -512,13 +553,15 @@ class _ClientOrderDetailsState extends State<ClientOrderDetails> {
                               children: [
                                 Text(
                                   ':',
-                                  style: kTextStyle.copyWith(color: kSubTitleColor),
+                                  style: kTextStyle.copyWith(
+                                      color: kSubTitleColor),
                                 ),
                                 const SizedBox(width: 10.0),
                                 Flexible(
                                   child: Text(
                                     'Basic',
-                                    style: kTextStyle.copyWith(color: kSubTitleColor),
+                                    style: kTextStyle.copyWith(
+                                        color: kSubTitleColor),
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                   ),
@@ -531,7 +574,8 @@ class _ClientOrderDetailsState extends State<ClientOrderDetails> {
                       const SizedBox(height: 15.0),
                       Text(
                         'Order Summary',
-                        style: kTextStyle.copyWith(color: kNeutralColor, fontWeight: FontWeight.bold),
+                        style: kTextStyle.copyWith(
+                            color: kNeutralColor, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8.0),
                       Row(
@@ -552,13 +596,15 @@ class _ClientOrderDetailsState extends State<ClientOrderDetails> {
                               children: [
                                 Text(
                                   ':',
-                                  style: kTextStyle.copyWith(color: kSubTitleColor),
+                                  style: kTextStyle.copyWith(
+                                      color: kSubTitleColor),
                                 ),
                                 const SizedBox(width: 10.0),
                                 Flexible(
                                   child: Text(
                                     '$currencySign 5.00',
-                                    style: kTextStyle.copyWith(color: kSubTitleColor),
+                                    style: kTextStyle.copyWith(
+                                        color: kSubTitleColor),
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                   ),
@@ -587,13 +633,15 @@ class _ClientOrderDetailsState extends State<ClientOrderDetails> {
                               children: [
                                 Text(
                                   ':',
-                                  style: kTextStyle.copyWith(color: kSubTitleColor),
+                                  style: kTextStyle.copyWith(
+                                      color: kSubTitleColor),
                                 ),
                                 const SizedBox(width: 10.0),
                                 Flexible(
                                   child: Text(
                                     '$currencySign 2.00',
-                                    style: kTextStyle.copyWith(color: kSubTitleColor),
+                                    style: kTextStyle.copyWith(
+                                        color: kSubTitleColor),
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                   ),
@@ -622,13 +670,15 @@ class _ClientOrderDetailsState extends State<ClientOrderDetails> {
                               children: [
                                 Text(
                                   ':',
-                                  style: kTextStyle.copyWith(color: kSubTitleColor),
+                                  style: kTextStyle.copyWith(
+                                      color: kSubTitleColor),
                                 ),
                                 const SizedBox(width: 10.0),
                                 Flexible(
                                   child: Text(
                                     '$currencySign 7.00',
-                                    style: kTextStyle.copyWith(color: kSubTitleColor),
+                                    style: kTextStyle.copyWith(
+                                        color: kSubTitleColor),
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                   ),
@@ -657,13 +707,15 @@ class _ClientOrderDetailsState extends State<ClientOrderDetails> {
                               children: [
                                 Text(
                                   ':',
-                                  style: kTextStyle.copyWith(color: kSubTitleColor),
+                                  style: kTextStyle.copyWith(
+                                      color: kSubTitleColor),
                                 ),
                                 const SizedBox(width: 10.0),
                                 Flexible(
                                   child: Text(
                                     'Thursday, 24 Jun 2023',
-                                    style: kTextStyle.copyWith(color: kSubTitleColor),
+                                    style: kTextStyle.copyWith(
+                                        color: kSubTitleColor),
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                   ),
@@ -679,12 +731,18 @@ class _ClientOrderDetailsState extends State<ClientOrderDetails> {
                           const SizedBox(height: 15.0),
                           Text(
                             'Delivery File From Seller',
-                            style: kTextStyle.copyWith(color: kNeutralColor, fontWeight: FontWeight.bold),
+                            style: kTextStyle.copyWith(
+                                color: kNeutralColor,
+                                fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 15.0),
                           Container(
-                            padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0), border: Border.all(color: kBorderColorTextField)),
+                            padding:
+                                const EdgeInsets.only(left: 10.0, right: 10.0),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.0),
+                                border:
+                                    Border.all(color: kBorderColorTextField)),
                             child: ListTile(
                               visualDensity: const VisualDensity(vertical: -3),
                               contentPadding: EdgeInsets.zero,
@@ -701,14 +759,16 @@ class _ClientOrderDetailsState extends State<ClientOrderDetails> {
                               ),
                               title: Text(
                                 'UI UX Design Mobile app...',
-                                style: kTextStyle.copyWith(color: kNeutralColor),
+                                style:
+                                    kTextStyle.copyWith(color: kNeutralColor),
                                 maxLines: 1,
                               ),
                               subtitle: Text(
                                 'Figma file 23564 25452...',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: kTextStyle.copyWith(color: kSubTitleColor),
+                                style:
+                                    kTextStyle.copyWith(color: kSubTitleColor),
                               ),
                               trailing: Container(
                                 padding: const EdgeInsets.all(10.0),
@@ -726,7 +786,9 @@ class _ClientOrderDetailsState extends State<ClientOrderDetails> {
                           const SizedBox(height: 10.0),
                           Text(
                             'Image',
-                            style: kTextStyle.copyWith(color: kNeutralColor, fontWeight: FontWeight.bold),
+                            style: kTextStyle.copyWith(
+                                color: kNeutralColor,
+                                fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 10.0),
                           Container(

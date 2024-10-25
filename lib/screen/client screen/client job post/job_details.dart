@@ -1,13 +1,20 @@
+import 'package:contractus/models/job_model.dart';
+import 'package:contractus/screen/seller%20screen/seller%20messgae/chat_inbox.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
-import 'package:contractus/screen/widgets/button_global.dart';
+import 'package:contractus/screen/widgets/custom_buttons/button_global.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:nb_utils/nb_utils.dart';
 
+import '../../../controller/authcontroller.dart';
+import '../../../models/auth_data.dart';
 import '../../widgets/constant.dart';
 import '../client popup/client_popup.dart';
 
 class JobDetails extends StatefulWidget {
-  const JobDetails({Key? key}) : super(key: key);
+  JobDetails({required this.jobmodel});
+  JobModel jobmodel;
 
   @override
   State<JobDetails> createState() => _JobDetailsState();
@@ -21,18 +28,60 @@ class _JobDetailsState extends State<JobDetails> {
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(
-          builder: (BuildContext context, void Function(void Function()) setState) {
+          builder:
+              (BuildContext context, void Function(void Function()) setState) {
             return Dialog(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.0),
               ),
-              child:const CancelJobPopUp(),
+              child: const CancelJobPopUp(),
             );
           },
         );
       },
     );
   }
+
+  Widget listitemdetail({title,description}){
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          flex: 2,
+          child: Text(
+            title,
+            style: kTextStyle.copyWith(color: kSubTitleColor),
+          ),
+        ),
+        Expanded(
+          flex: 4,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                ':',
+                style:
+                kTextStyle.copyWith(color: kSubTitleColor),
+              ),
+              const SizedBox(width: 10.0),
+              Flexible(
+                child: Text(
+                  description,
+                  style: kTextStyle.copyWith(
+                      color: kSubTitleColor),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Auth_Controller authy = Get.put(Auth_Controller());
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +93,12 @@ class _JobDetailsState extends State<JobDetails> {
         iconTheme: const IconThemeData(color: kNeutralColor),
         title: Text(
           'Job Details',
-          style: kTextStyle.copyWith(color: kNeutralColor, fontWeight: FontWeight.bold),
+          style: kTextStyle.copyWith(
+              color: kNeutralColor, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         actions: [
+          authy.authData.value!.id == widget.jobmodel.postby ?
           PopupMenuButton(
             padding: EdgeInsets.zero,
             itemBuilder: (BuildContext context) => [
@@ -71,28 +122,13 @@ class _JobDetailsState extends State<JobDetails> {
                 color: kNeutralColor,
               ),
             ),
-          ),
+          ): const SizedBox(),
         ],
-      ),
-      bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          color: kWhite,
-        ),
-        child: ButtonGlobalWithoutIcon(
-          buttontext: 'Re-Post',
-          buttonDecoration: kButtonDecoration.copyWith(color: kPrimaryColor,),
-          onPressed: () {
-            setState(() {
-              cancelOrderPopUp();
-            });
-          },
-          buttonTextColor: kWhite,
-        ),
       ),
       body: Container(
         padding: const EdgeInsets.only(left: 15.0, right: 15.0),
-        width: context.width(),
-        height: context.height(),
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
         decoration: const BoxDecoration(
           color: kWhite,
           borderRadius: BorderRadius.only(
@@ -107,7 +143,7 @@ class _JobDetailsState extends State<JobDetails> {
               const SizedBox(height: 15.0),
               Container(
                 padding: const EdgeInsets.all(10.0),
-                width: context.width(),
+                width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
                   color: kWhite,
                   borderRadius: BorderRadius.circular(8.0),
@@ -125,12 +161,13 @@ class _JobDetailsState extends State<JobDetails> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'I Need UI UX Designer',
-                      style: kTextStyle.copyWith(color: kNeutralColor, fontWeight: FontWeight.bold),
+                      widget.jobmodel.title,
+                      style: kTextStyle.copyWith(
+                          color: kNeutralColor, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 10.0),
                     ReadMoreText(
-                      'Lorem ipsum dolor sit amet consectetur. Tortor sapien aliquam amet elit. Quis varius amet grav ida molestie rhoncus. Lorem ipsum dolor sit amet consectetur. Tortor sapien aliquam amet elit. Quis varius amet grav ida molestie rhoncus.',
+                      widget.jobmodel.desc,
                       style: kTextStyle.copyWith(color: kSubTitleColor),
                       trimLines: 2,
                       colorClickableText: kPrimaryColor,
@@ -139,250 +176,18 @@ class _JobDetailsState extends State<JobDetails> {
                       trimExpandedText: '..Read less',
                     ),
                     const SizedBox(height: 15.0),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: Text(
-                            'Category',
-                            style: kTextStyle.copyWith(color: kSubTitleColor),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 4,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                ':',
-                                style: kTextStyle.copyWith(color: kSubTitleColor),
-                              ),
-                              const SizedBox(width: 10.0),
-                              Flexible(
-                                child: Text(
-                                  'Logo design',
-                                  style: kTextStyle.copyWith(color: kSubTitleColor),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 2,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                    listitemdetail(title: 'Category',description: widget.jobmodel.category),
                     const SizedBox(height: 8.0),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: Text(
-                            'Subcategory',
-                            style: kTextStyle.copyWith(color: kSubTitleColor),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 4,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                ':',
-                                style: kTextStyle.copyWith(color: kSubTitleColor),
-                              ),
-                              const SizedBox(width: 10.0),
-                              Flexible(
-                                child: Text(
-                                  'Logo design',
-                                  style: kTextStyle.copyWith(color: kSubTitleColor),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                    listitemdetail(title: 'Subcategory',description: widget.jobmodel.subcategory),
                     const SizedBox(height: 8.0),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: Text(
-                            'Delivery Time',
-                            style: kTextStyle.copyWith(color: kSubTitleColor),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 4,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                ':',
-                                style: kTextStyle.copyWith(color: kSubTitleColor),
-                              ),
-                              const SizedBox(width: 10.0),
-                              Flexible(
-                                child: Text(
-                                  '24 Hours',
-                                  style: kTextStyle.copyWith(color: kSubTitleColor),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                    listitemdetail(title: 'Delivery Time',description: widget.jobmodel.estduration),
                     const SizedBox(height: 8.0),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: Text(
-                            'Service Price',
-                            style: kTextStyle.copyWith(color: kSubTitleColor),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 4,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                ':',
-                                style: kTextStyle.copyWith(color: kSubTitleColor),
-                              ),
-                              const SizedBox(width: 10.0),
-                              Flexible(
-                                child: Text(
-                                  '\$5.00',
-                                  style: kTextStyle.copyWith(color: kSubTitleColor),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                    listitemdetail(title: 'Service Price',description: widget.jobmodel.paymentrate),
                     const SizedBox(height: 8.0),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: Text(
-                            'Status',
-                            style: kTextStyle.copyWith(color: kSubTitleColor),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 4,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                ':',
-                                style: kTextStyle.copyWith(color: kSubTitleColor),
-                              ),
-                              const SizedBox(width: 10.0),
-                              Flexible(
-                                child: Text(
-                                  'Completed',
-                                  style: kTextStyle.copyWith(color: kSubTitleColor),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                    // listitemdetail(title: 'Status',description: widget.jobmodel.status),
+                    // const SizedBox(height: 8.0),
+                    listitemdetail(title: 'Date',description: widget.jobmodel.datestr),
                     const SizedBox(height: 8.0),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: Text(
-                            'Date',
-                            style: kTextStyle.copyWith(color: kSubTitleColor),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 4,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                ':',
-                                style: kTextStyle.copyWith(color: kSubTitleColor),
-                              ),
-                              const SizedBox(width: 10.0),
-                              Flexible(
-                                child: Text(
-                                  '24 Jun 2022',
-                                  style: kTextStyle.copyWith(color: kSubTitleColor),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8.0),
-                    Text(
-                      'Attach file:',
-                      style: kTextStyle.copyWith(color: kSubTitleColor),
-                    ),
-                    const SizedBox(height: 8.0),
-                    Row(
-                      children: [
-                        Container(
-                          width: 100,
-                          height: 70,
-                          decoration: BoxDecoration(
-                            color: kDarkWhite,
-                            borderRadius: BorderRadius.circular(6.0),
-                          ),
-                          child: Icon(
-                            IconlyBold.document,
-                            color: kNeutralColor.withOpacity(0.7),
-                            size: 50,
-                          ),
-                        ),
-                        const SizedBox(width: 10.0),
-                        Container(
-                          width: 100,
-                          height: 70,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(6.0),
-                            image: const DecorationImage(
-                              image: AssetImage('images/file.png'),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
                   ],
                 ),
               ),

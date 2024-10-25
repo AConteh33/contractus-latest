@@ -102,7 +102,6 @@ List<String> catIcon = [
   'images/l.png'
 ];
 
-
 //__________Language List_______________________________________________
 List<String> language = [
   'English',
@@ -189,6 +188,34 @@ List<String> deliveryTime = [
 
 String selectedDeliveryTime = '3 days';
 
+//______________________Estimated Duration__________________
+List<String> estimatedDuration = [
+  '1 hours',
+  '2 hours',
+  '3 hours',
+  '4 hours',
+  '5 hours',
+  '6 hours',
+  '7 hours',
+  '8 hours',
+  '9 hours',
+  '10 hours',
+  '11 hours',
+  '12 hours',
+  '13 hours',
+  '14 hours',
+  '15 hours',
+  '16 hours',
+  '17 hours',
+  '18 hours',
+  '19 hours',
+  '20 hours',
+  '21 hours',
+  '22 hours',
+  '23 hours',
+  '24 hours',
+];
+
 //__________time______________________________________________________
 List<String> pageCount = [
   '10 screen',
@@ -258,7 +285,6 @@ List<String> currency = [
 ];
 
 String selectedCurrency = 'USD';
-
 
 List<Color> colorList = [
   const Color(0xFF69B22A),

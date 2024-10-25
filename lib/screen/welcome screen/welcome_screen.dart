@@ -5,7 +5,7 @@ import 'package:contractus/screen/widgets/constant.dart';
 
 import '../client screen/client_authentication/client_sign_up.dart';
 import '../seller screen/seller authentication/seller_sign_up.dart';
-import '../widgets/button_global.dart';
+import '../widgets/custom_buttons/button_global.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({Key? key}) : super(key: key);

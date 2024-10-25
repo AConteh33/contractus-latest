@@ -54,65 +54,65 @@ class _ClientSettingState extends State<ClientSetting> {
             child: Column(
               children: [
                 const SizedBox(height: 30.0),
-                ListTile(
-                  visualDensity: const VisualDensity(vertical: -3),
-                  horizontalTitleGap: 10,
-                  contentPadding: const EdgeInsets.only(bottom: 15),
-                  leading: Container(
-                    padding: const EdgeInsets.all(10.0),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Color(0xFFE7FFED),
-                    ),
-                    child: const Icon(
-                      IconlyBold.notification,
-                      color: kPrimaryColor,
-                    ),
-                  ),
-                  title: Text(
-                    'Push Notifications',
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                    style: kTextStyle.copyWith(color: kNeutralColor),
-                  ),
-                  trailing: CupertinoSwitch(
-                    value: isOn,
-                    onChanged: (value) {
-                      setState(() {
-                        isOn = value;
-                      });
-                    },
-                  ),
-                ),
-                ListTile(
-                  onTap: () => const ClientLanguage().launch(context),
-                  visualDensity: const VisualDensity(vertical: -3),
-                  horizontalTitleGap: 10,
-                  contentPadding: const EdgeInsets.only(bottom: 15),
-                  leading: Container(
-                    padding: const EdgeInsets.all(10.0),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Color(0xFFE3EDFF),
-                    ),
-                    child: const Icon(
-                      Icons.translate,
-                      color: Color(0xFF144BD6),
-                    ),
-                  ),
-                  title: Text(
-                    'Language',
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                    style: kTextStyle.copyWith(color: kNeutralColor),
-                  ),
-                  trailing: Text(
-                    'English',
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                    style: kTextStyle.copyWith(color: kSubTitleColor),
-                  ),
-                ),
+                // ListTile(
+                //   visualDensity: const VisualDensity(vertical: -3),
+                //   horizontalTitleGap: 10,
+                //   contentPadding: const EdgeInsets.only(bottom: 15),
+                //   leading: Container(
+                //     padding: const EdgeInsets.all(10.0),
+                //     decoration: const BoxDecoration(
+                //       shape: BoxShape.circle,
+                //       color: Color(0xFFE7FFED),
+                //     ),
+                //     child: const Icon(
+                //       IconlyBold.notification,
+                //       color: kPrimaryColor,
+                //     ),
+                //   ),
+                //   title: Text(
+                //     'Push Notifications',
+                //     overflow: TextOverflow.ellipsis,
+                //     maxLines: 1,
+                //     style: kTextStyle.copyWith(color: kNeutralColor),
+                //   ),
+                //   trailing: CupertinoSwitch(
+                //     value: isOn,
+                //     onChanged: (value) {
+                //       setState(() {
+                //         isOn = value;
+                //       });
+                //     },
+                //   ),
+                // ),
+                // ListTile(
+                //   onTap: () => const ClientLanguage().launch(context),
+                //   visualDensity: const VisualDensity(vertical: -3),
+                //   horizontalTitleGap: 10,
+                //   contentPadding: const EdgeInsets.only(bottom: 15),
+                //   leading: Container(
+                //     padding: const EdgeInsets.all(10.0),
+                //     decoration: const BoxDecoration(
+                //       shape: BoxShape.circle,
+                //       color: Color(0xFFE3EDFF),
+                //     ),
+                //     child: const Icon(
+                //       Icons.translate,
+                //       color: Color(0xFF144BD6),
+                //     ),
+                //   ),
+                //   title: Text(
+                //     'Language',
+                //     overflow: TextOverflow.ellipsis,
+                //     maxLines: 1,
+                //     style: kTextStyle.copyWith(color: kNeutralColor),
+                //   ),
+                //   trailing: Text(
+                //     'English',
+                //     overflow: TextOverflow.ellipsis,
+                //     maxLines: 1,
+                //     style: kTextStyle.copyWith(color: kSubTitleColor),
+                //   ),
+                // ),
                 ListTile(
                   onTap: () => const ClientPolicy().launch(context),
                   visualDensity: const VisualDensity(vertical: -3),

@@ -1,18 +1,18 @@
 import 'package:contractus/controller/datacontroller.dart';
-import 'package:contractus/models/category.dart';
-import 'package:contractus/models/categorymodel.dart';
-import 'package:contractus/models/service.dart';
 import 'package:contractus/screen/widgets/cards/category.dart';
 import 'package:contractus/screen/widgets/titleviewmore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:nb_utils/nb_utils.dart';
 
+import '../../../controller/authcontroller.dart';
 import '../../widgets/cards/sellerscard.dart';
 import '../../widgets/cards/servicecard.dart';
 import '../../widgets/constant.dart';
-import '../../widgets/mapbutton.dart';
+import '../../widgets/loading.dart';
+import '../../widgets/custom_buttons/mapbutton.dart';
 import '../../widgets/searcbox.dart';
 import '../../widgets/topbars/client_home_bar.dart';
 
@@ -27,8 +27,36 @@ class ClientHomeScreen extends StatefulWidget {
 
 class _ClientHomeScreenState extends State<ClientHomeScreen> {
 
+  Widget loadingcard() {
+    return SizedBox(
+      height: 150,
+      width: MediaQuery.of(context).size.width - 10,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          LoadingWidget(
+            isloading: true,
+            child: Container(),
+          ),
+        ],
+      ),
+    );
+  }
 
+  Auth_Controller authy  = Get.put(Auth_Controller());
+  DataController datactrlr = Get.put(DataController());
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    if(widget.signedin){
+      authy.getSellerStats();
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,14 +67,14 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
           backgroundColor: kDarkWhite,
           elevation: 0,
           automaticallyImplyLeading: false,
-          title: ClientHomeBar(
+          title: HomeBar(
             signedin: widget.signedin,
           ),
         ),
         body: Padding(
           padding: const EdgeInsets.only(top: 15.0),
           child: Container(
-            width: context.width(),
+            width: MediaQuery.of(context).size.width,
             decoration: const BoxDecoration(
               color: kWhite,
               borderRadius: BorderRadius.only(
@@ -59,13 +87,13 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
               child: GetBuilder<DataController>(
                   init: DataController(),
                   builder: (data) {
-
                     return Column(
                       children: [
 
                         SearchBox(
                           hint: 'Job Search...',
-                          istherenext: true, jobsearch: true,
+                          istherenext: true,
+                          jobsearch: true,
                         ),
 
                         const SizedBox(height: 10.0),
@@ -104,64 +132,79 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
                           spacing: 10.0,
                           itemCount: data.categorylist.length,
                           itemBuilder: (_, i) {
-                            return CategoryCard(
-                              category: data.categorylist[i]
-                            );
+                            return CategoryCard(category: data.categorylist[i]);
                           },
                         ),
 
                         TitleViewMore(
                           ontap: () {},
-                          title: 'Local Jobs',
+                          title: 'Local Services',
                         ),
 
-                        HorizontalList(
-                          physics: const BouncingScrollPhysics(),
-                          padding: const EdgeInsets.only(
-                              top: 20, bottom: 20, left: 15.0, right: 15.0),
-                          spacing: 10.0,
-                          itemCount: data.serviceModellist.length,
-                          itemBuilder: (_, i) {
-                            return ServiceCard(
-                              servicedata: data.serviceModellist[i]);
-                          },
-                        ),
+                        data.loading.value
+                            ? loadingcard()
+                            : HorizontalList(
+                                physics: const BouncingScrollPhysics(),
+                                padding: const EdgeInsets.only(
+                                    top: 20,
+                                    bottom: 20,
+                                    left: 15.0,
+                                    right: 15.0),
+                                spacing: 10.0,
+                                itemCount: data.serviceModellist.value.length,
+                                itemBuilder: (_, i) {
+                                  return ServiceCard(
+                                      servicedata:
+                                          data.serviceModellist.value[i]);
+                                },
+                              ),
+
+                        // TitleViewMore(
+                        //   ontap: () {},
+                        //   title: 'Top Sellers',
+                        // ),
+                        //
+                        // data.loading.value
+                        //     ? loadingcard()
+                        //     : HorizontalList(
+                        //         physics: const BouncingScrollPhysics(),
+                        //         padding: const EdgeInsets.only(
+                        //             top: 20,
+                        //             bottom: 20,
+                        //             left: 15.0,
+                        //             right: 15.0),
+                        //         spacing: 10.0,
+                        //         itemCount: data.sellerlist.length,
+                        //         itemBuilder: (_, i) {
+                        //           return SellersCard(
+                        //             seller: data.sellerlist[i],
+                        //           );
+                        //         },
+                        //       ),
 
                         TitleViewMore(
                           ontap: () {},
-                          title: 'Top Sellers',
+                          title: 'Recent Local Services',
                         ),
 
-                        HorizontalList(
-                          physics: const BouncingScrollPhysics(),
-                          padding: const EdgeInsets.only(
-                              top: 20, bottom: 20, left: 15.0, right: 15.0),
-                          spacing: 10.0,
-                          itemCount: data.sellerlist.length,
-                          itemBuilder: (_, i) {
-                            return SellersCard(
-                              seller: data.sellerlist[i],
-                            );
-                          },
-                        ),
+                        data.loading.value
+                            ? loadingcard()
+                            : HorizontalList(
+                                physics: const BouncingScrollPhysics(),
+                                padding: const EdgeInsets.only(
+                                    top: 20,
+                                    bottom: 10,
+                                    left: 15.0,
+                                    right: 15.0),
+                                spacing: 10.0,
+                                itemCount: data.serviceModellist.value.length,
+                                itemBuilder: (_, i) {
+                                  return ServiceCard(
+                                      servicedata:
+                                          data.serviceModellist.value[i]);
+                                },
+                              ),
 
-                        TitleViewMore(
-                          ontap: () {},
-                          title: 'Recent Local jobs',
-                        ),
-
-                        HorizontalList(
-                          physics: const BouncingScrollPhysics(),
-                          padding: const EdgeInsets.only(
-                              top: 20, bottom: 10, left: 15.0, right: 15.0),
-                          spacing: 10.0,
-                          itemCount: data.serviceModellist.length,
-                          itemBuilder: (_, i) {
-                            return ServiceCard(
-                              servicedata: data.serviceModellist[i]
-                            );
-                          },
-                        ),
                       ],
                     );
                   }),

@@ -12,8 +12,10 @@ class AuthData  {
   String firstname = '';
   String lastname = '';
   String phone = '';
+  String businessname = '';
   String address = '';
   String country = '';
+  String aboutme = '';
   String city = '';
   String language = '';
   String gender = '';
@@ -26,6 +28,9 @@ AuthData({
   required this.role,
   required this.firstname,
   required this.lastname,
+  required this.businessname,
+  required this.aboutme,
+  // required this.address,
 });
 
 }

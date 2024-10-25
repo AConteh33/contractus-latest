@@ -1,123 +1,137 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:contractus/controller/authcontroller.dart';
+import 'package:contractus/controller/chatcontroller.dart';
+import 'package:contractus/models/chatmodel.dart';
+import 'package:contractus/screen/seller%20screen/seller%20messgae/chat_inbox.dart';
+import 'package:contractus/screen/seller%20screen/seller%20messgae/userTile.dart';
+import 'package:contractus/screen/widgets/constant.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:nb_utils/nb_utils.dart';
-
-import '../../widgets/constant.dart';
-import 'chat_inbox.dart';
-import 'model/chat_model.dart';
-import 'provider/data_provider.dart';
+import 'package:get/get.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({Key? key}) : super(key: key);
+  const ChatScreen({super.key});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  // ignore: non_constant_identifier_names
-  List<ChatModel> list_data = maanGetChatList();
-
   @override
   void initState() {
     super.initState();
-    init();
   }
 
-  Future<void> init() async {
-    //
-  }
+  Auth_Controller authy = Get.put(Auth_Controller());
 
   @override
   void setState(fn) {
     if (mounted) super.setState(fn);
   }
 
+  final ChatController chatController = ChatController();
+  final String currentUserID = FirebaseAuth.instance.currentUser!.uid;
+  RxList<ChatModel> chatsList = <ChatModel>[].obs;
+
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: kDarkWhite,
-        // appBar: AppBar(
-        //   leading: const SizedBox(),
-        //   iconTheme: const IconThemeData(color: kNeutralColor),
-        //   backgroundColor: kDarkWhite,
-        //   elevation: 0.0,
-        //   centerTitle: true,
-        //   title: Text(
-        //     'Message',
-        //     style: kTextStyle.copyWith(
-        //         color: kNeutralColor,
-        //         fontWeight: FontWeight.bold
-        //     ),
-        //   ),
-        // ),
-        body: Column(
-          children: [
-            SizedBox(
-              height: 60,
-              width: MediaQuery.of(context).size.width,
-              child: Center(
-              child: Text(
-                'Message',
-                style: kTextStyle.copyWith(
-                    color: kNeutralColor,
-                    fontWeight: FontWeight.bold
-                ),
-              ),
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 0.0),
-                child: Container(
-                  padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-                  decoration: const BoxDecoration(
-                    color: kWhite,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30.0),
-                      topRight: Radius.circular(30.0),
-                    ),
-                  ),
-                  child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    child: Column(
-                      children: list_data.map(
-                        (data) {
-                          return Column(
-                            children: [
-                              const SizedBox(height: 10.0),
-                              SettingItemWidget(
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                title: data.title.validate(),
-                                subTitle: data.subTitle.validate(),
-                                leading: Image.network(data.image.validate(), height: 50, width: 50, fit: BoxFit.cover).cornerRadiusWithClipRRect(25),
-                                trailing: Column(
-                                  children: [
-                                    Text('10.00 AM', style: secondaryTextStyle()),
-                                  ],
-                                ),
-                                onTap: () {
-                                  ChatInbox(img: data.image.validate(), name: data.title.validate()).launch(context);
-                                },
-                              ),
-                              const Divider(
-                                thickness: 1.0,
-                                color: kBorderColorTextField,
-                                height: 0,
-                              ),
-                            ],
-                          );
-                        },
-                      ).toList(),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
+    return Scaffold(
+      backgroundColor: kDarkWhite,
+      appBar: AppBar(
+        title: Text(
+          'Messages',
+          style: kTextStyle.copyWith(
+              color: kNeutralColor, fontWeight: FontWeight.bold),
         ),
+        centerTitle: true,
+        backgroundColor: kDarkWhite,
       ),
+      body: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+        decoration: const BoxDecoration(
+          color: kWhite,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30.0),
+            topRight: Radius.circular(30.0),
+          ),
+        ),
+        child: _buildChatsList(),
+      ),
+    );
+  }
+
+  Widget _buildChatsList() {
+
+    return StreamBuilder(
+        stream: chatController.getUserChatsList(),
+        builder: (context, snapshot) {
+
+          if (snapshot.hasError) {
+            return const Text("Error");
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (!snapshot.hasData) {
+            // Handle no data scenario (optional)
+            return const Center(child: Text("No chats found"));
+          }
+
+          return ListView(
+            children: snapshot.data!
+                .map<Widget>(
+                    (chatData)
+                => _buildChatsListItem(chatData, context)
+            ).toList(),
+          );
+
+        });
+
+  }
+
+  Widget _buildChatsListItem(
+      Map<String, dynamic> chatData, BuildContext context) {
+
+    bool Iseller = 'iseller' == authy.authData.value!.role;
+
+    return FutureBuilder<DocumentSnapshot>(
+        future: FirebaseFirestore.instance
+            .collection('users')
+            .doc(
+            Iseller ?
+            chatData['senderID']:
+            chatData['recieverID']
+
+        ).get(),
+        builder: (context,snapshot) {
+
+        return UserTile(
+          onTap: () {
+
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ChatInbox(
+                        recieverName: chatData["recieverName"],
+                        recieverID: chatData["recieverID"],
+                      iseller: authy.authData.value!.role == 'seller',
+                      chatRoomID: chatData["chatID"],
+                    )
+                )
+            );
+
+          },
+          recieverName: snapshot.data?['name'],
+          lastMessage: chatData["lastMessage"].contains('%%') ?
+          '(Offer has been Sent)' : chatData["lastMessage"],
+          lastMessageTime: chatData["lastMessageTime"],
+        );
+      }
     );
   }
 }

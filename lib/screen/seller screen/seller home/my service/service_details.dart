@@ -1,8 +1,15 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:contractus/controller/authcontroller.dart';
+import 'package:contractus/controller/chatcontroller.dart';
+import 'package:contractus/models/auth_data.dart';
+import 'package:contractus/screen/seller%20screen/seller%20messgae/chat_inbox.dart';
+import 'package:contractus/screen/widgets/custom_buttons/button_global.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:contractus/screen/widgets/constant.dart';
+import 'package:get/get.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -20,10 +27,17 @@ class ServiceDetails extends StatefulWidget {
 
 class _ServiceDetailsState extends State<ServiceDetails>
     with TickerProviderStateMixin {
+
+  ChatController chatController = ChatController();
+
   PageController pageController = PageController(initialPage: 0);
+
   TabController? tabController;
+
   ScrollController? _scrollController;
+
   bool lastStatus = false;
+
   double height = 200;
 
   void _scrollListener() {
@@ -54,215 +68,81 @@ class _ServiceDetailsState extends State<ServiceDetails>
     super.dispose();
   }
 
-  final CarouselController _controller = CarouselController();
+  // final CarouselController _controller = CarouselController();
+
+  Auth_Controller authy = Get.put(Auth_Controller());
+
+  Widget detailtile({title,desc}){
+    return Row(
+      children: [
+        Text(
+          title + ' :',
+          maxLines: 1,
+          style: kTextStyle.copyWith(
+              color: kNeutralColor,
+              fontWeight: FontWeight.w400,
+              fontSize: 15),
+        ),
+        const SizedBox(width: 10.0),
+        Text(
+          desc,
+          style:
+          kTextStyle.copyWith(fontSize: 15),
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         backgroundColor: kWhite,
-        body: NestedScrollView(
-          physics: const BouncingScrollPhysics(),
-          controller: _scrollController,
-          headerSliverBuilder: (context, innerBoxIsScrolled) {
-            return [
-               
-              SliverAppBar(
-                elevation: 0,
-                backgroundColor: _isShrink ? kWhite : Colors.transparent,
-                pinned: true,
-                expandedHeight: 290,
-                titleSpacing: 10,
-                automaticallyImplyLeading: false,
-                forceElevated: innerBoxIsScrolled,
-                leading: _isShrink
-                    ? GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: const Icon(
-                          Icons.arrow_back,
-                          color: kNeutralColor,
-                        ),
-                      )
-                    : Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: GestureDetector(
-                          onTap: () => Navigator.pop(context),
-                          child: Container(
-                            padding: const EdgeInsets.all(5.0),
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: kWhite,
-                            ),
-                            child: const Icon(
-                              Icons.arrow_back,
-                              color: kNeutralColor,
-                            ),
-                          ),
-                        ),
-                      ),
-                flexibleSpace: FlexibleSpaceBar(
-                  collapseMode: CollapseMode.parallax,
-                  background: SafeArea(
-                    child: CarouselSlider.builder(
-                      carouselController: _controller,
-                      options: CarouselOptions(
-                        height: 300,
-                        aspectRatio: 18 / 18,
-                        viewportFraction: 1,
-                        initialPage: 0,
-                        enableInfiniteScroll: true,
-                        reverse: false,
-                        autoPlay: false,
-                        autoPlayCurve: Curves.fastOutSlowIn,
-                        enlargeCenterPage: false,
-                        onPageChanged: (i, j) {
-                          pageController.nextPage(
-                              duration: const Duration(microseconds: 1),
-                              curve: Curves.bounceIn);
-                        },
-                        scrollDirection: Axis.horizontal,
-                      ),
-                      itemCount: widget.servicemodel.imageurls.length,
-                      itemBuilder:
-                          (BuildContext context, int index, int realIndex) {
-                        return Stack(
-                          alignment: Alignment.bottomCenter,
-                          children: [
-                            SizedBox(
-                              height: 300,
-                              width: MediaQuery.of(context).size.width,
-                              child: Image.network(
-                                  widget.servicemodel.imageurls[index] ?? ' '),
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                SmoothPageIndicator(
-                                  controller: pageController,
-                                  count: 3,
-                                  effect: JumpingDotEffect(
-                                    dotHeight: 6.0,
-                                    dotWidth: 6.0,
-                                    jumpScale: .7,
-                                    verticalOffset: 15,
-                                    activeDotColor: kPrimaryColor,
-                                    dotColor: kPrimaryColor.withOpacity(0.2),
-                                  ),
-                                ),
-                                const SizedBox(height: 10.0),
-                                Container(
-                                  height: 20,
-                                  width: MediaQuery.of(context).size.width,
-                                  decoration: const BoxDecoration(
-                                      borderRadius: BorderRadius.only(
-                                        topRight: Radius.circular(30.0),
-                                        topLeft: Radius.circular(30.0),
-                                      ),
-                                      color: kWhite),
-                                )
-                              ],
-                            ),
-                          ],
-                        );
-                      },
-                    ),
+        appBar: AppBar(
+          title: const Text('Contractor Details'),
+        ),
+        bottomNavigationBar: Container(
+          decoration: const BoxDecoration(
+            color: kWhite,
+          ),
+          child: ButtonGlobalWithoutIcon(
+            buttontext: 'Start a chat with ${widget.servicemodel.name}',
+            buttonDecoration: kButtonDecoration.copyWith(
+              color: kPrimaryColor,
+            ),
+            onPressed: () async {
+
+              AuthData userdata = await authy.getotheruser(
+                  userid: widget.servicemodel.postedby
+              );
+
+              String newchatroom = await chatController.createChatRoom(
+                  message: 'New chat room created',
+                  timestamp: Timestamp.now(),
+                  recieverID: userdata.id,
+                  recieverName: userdata.name,
+                  senderName: authy.authData.value!.id
+              );
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChatInbox(
+                      recieverName: userdata.name,
+                      recieverID: widget.servicemodel.postedby,
+                    iseller: authy.authData.value!.role == 'seller',
+                    chatRoomID: newchatroom,
                   ),
                 ),
-                actions: _isShrink
-                    ? [
-                        Padding(
-                          padding: const EdgeInsets.only(right: 10.0),
-                          child: Container(
-                            padding: const EdgeInsets.all(5.0),
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: kWhite,
-                            ),
-                            child: PopupMenuButton(
-                              itemBuilder: (BuildContext bc) => [
-                                PopupMenuItem(
-                                  child: Text(
-                                    'Edit',
-                                    style: kTextStyle.copyWith(
-                                        color: kNeutralColor),
-                                  ),
-                                ),
-                                PopupMenuItem(
-                                  child: Text(
-                                    'Pause',
-                                    style: kTextStyle.copyWith(
-                                        color: kNeutralColor),
-                                  ),
-                                ),
-                                PopupMenuItem(
-                                  child: Text(
-                                    'Delete',
-                                    style: kTextStyle.copyWith(
-                                        color: kNeutralColor),
-                                  ),
-                                ),
-                              ],
-                              onSelected: (value) {
-                                Navigator.pushNamed(context, '$value');
-                              },
-                              child: const Icon(
-                                FeatherIcons.moreVertical,
-                                color: kNeutralColor,
-                              ),
-                            ),
-                          ),
-                        )
-                      ]
-                    : [
-                        Padding(
-                          padding: const EdgeInsets.only(right: 10.0),
-                          child: Container(
-                            padding: const EdgeInsets.all(5.0),
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: kWhite,
-                            ),
-                            child: PopupMenuButton(
-                              itemBuilder: (BuildContext bc) => [
-                                PopupMenuItem(
-                                  child: Text(
-                                    'Edit',
-                                    style: kTextStyle.copyWith(
-                                        color: kNeutralColor),
-                                  ),
-                                ),
-                                PopupMenuItem(
-                                  child: Text(
-                                    'Pause',
-                                    style: kTextStyle.copyWith(
-                                        color: kNeutralColor),
-                                  ),
-                                ),
-                                PopupMenuItem(
-                                  child: Text(
-                                    'Delete',
-                                    style: kTextStyle.copyWith(
-                                        color: kNeutralColor),
-                                  ),
-                                ),
-                              ],
-                              onSelected: (value) {
-                                Navigator.pushNamed(context, '$value');
-                              },
-                              child: const Icon(
-                                FeatherIcons.moreVertical,
-                                color: kNeutralColor,
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
-              ),
-            ];
-          },
-          body: CustomScrollView(
+              );
+
+              // cancelOrderPopUp();
+
+            },
+            buttonTextColor: kWhite,
+          ),
+        ),
+        body: CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: [
               SliverList(
@@ -291,74 +171,84 @@ class _ServiceDetailsState extends State<ServiceDetails>
                                 maxLines: 2,
                                 style: kTextStyle.copyWith(
                                     color: kNeutralColor,
-                                    fontWeight: FontWeight.bold),
+                                    fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                ),
                               ),
                               const SizedBox(
                                 height: 4.0,
                               ),
-                              Row(
-                                children: [
-                                  const Icon(
-                                    IconlyBold.star,
-                                    color: Colors.amber,
-                                    size: 18.0,
-                                  ),
-                                  const SizedBox(width: 5.0),
-                                  RichText(
-                                    text: TextSpan(
-                                        text: '${widget.servicemodel.rating} ',
-                                        style: kTextStyle.copyWith(
-                                            color: kNeutralColor),
-                                        children: [
-                                          TextSpan(
-                                              text:
-                                                  '(${widget.servicemodel.ratingcount} Reviews)',
-                                              style: kTextStyle.copyWith(
-                                                  color: kLightNeutralColor))
-                                        ]),
-                                  ),
-                                  const Spacer(),
-                                  const Icon(
-                                    Icons.favorite,
-                                    color: Colors.red,
-                                    size: 18.0,
-                                  ),
-                                  const SizedBox(width: 4.0),
-                                  Text(
-                                    widget.servicemodel.likes.toString(),
-                                    maxLines: 1,
-                                    style: kTextStyle.copyWith(
-                                        color: kLightNeutralColor),
-                                  )
-                                ],
+                              const Divider(
+                                thickness: 1.0,
+                                color: kBorderColorTextField,
                               ),
-                              ListTile(
-                                contentPadding: EdgeInsets.zero,
-                                horizontalTitleGap: 10,
-                                leading: const CircleAvatar(
-                                  radius: 22.0,
-                                  backgroundImage:
-                                      AssetImage('images/profilepic.png'),
-                                ),
-                                title: Text(
-                                  widget.servicemodel.name,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: kTextStyle.copyWith(
-                                      color: kNeutralColor,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                subtitle: RichText(
-                                  text: TextSpan(
-                                    text: 'Seller Level - 1 ',
-                                    style: kTextStyle.copyWith(
-                                        color: kNeutralColor),
+                              Container(
+                                padding: const EdgeInsets.only(left: 15.0, top: 10,bottom: 10,right: 15.0),
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                    color: kWhite,
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    border: Border.all(color: kBorderColorTextField),
+                                    boxShadow: const [BoxShadow(color: kDarkWhite, spreadRadius: 4.0, blurRadius: 4.0, offset: Offset(0, 2))]),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Offer',
+                                      maxLines: 1,
+                                      style: kTextStyle.copyWith(
+                                          color: kNeutralColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15),
+                                    ),
+                                    const SizedBox(height: 5,),
+                                    detailtile(title: 'Budget',desc:widget.servicemodel.price ),
+                                    const SizedBox(height: 5.0),
+                                    detailtile(title: 'Category',desc:widget.servicemodel.category),
+                                    const SizedBox(height: 5.0),
+                                    detailtile(title: 'Sub-Category',desc:widget.servicemodel.subcategory),
+                                    const SizedBox(height: 5.0),
+                                  ],
+                                ) ,
+                              ),
+
+                              const Divider(
+                                thickness: 1.0,
+                                color: kBorderColorTextField,
+                              ),
+
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                    color: kWhite,
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    border: Border.all(color: kBorderColorTextField),
+                                    boxShadow: const [BoxShadow(color: kDarkWhite, spreadRadius: 4.0, blurRadius: 4.0, offset: Offset(0, 2))]),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      TextSpan(
-                                        text: '(View Profile)',
+                                      Text(
+                                        'Details',
+                                        maxLines: 1,
                                         style: kTextStyle.copyWith(
-                                            color: kPrimaryColor),
-                                      )
+                                            color: kNeutralColor,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 15),
+                                      ),
+                                      const SizedBox(height: 5.0),
+                                      ReadMoreText(
+                                        widget.servicemodel.details,
+                                        style: kTextStyle.copyWith(
+                                            fontSize: 15,
+                                            color: kLightNeutralColor),
+                                        trimLines: 3,
+                                        colorClickableText: kPrimaryColor,
+                                        trimMode: TrimMode.Line,
+                                        trimCollapsedText: 'Read more',
+                                        trimExpandedText: 'Read less',
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -367,131 +257,42 @@ class _ServiceDetailsState extends State<ServiceDetails>
                                 thickness: 1.0,
                                 color: kBorderColorTextField,
                               ),
-                              const SizedBox(height: 5.0),
-                              Text(
-                                'Details',
-                                maxLines: 1,
-                                style: kTextStyle.copyWith(
-                                    color: kNeutralColor,
-                                    fontWeight: FontWeight.bold),
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(
+                                color: kWhite,
+                                borderRadius: BorderRadius.circular(8.0),
+                                border: Border.all(color: kBorderColorTextField),
+                                boxShadow: const [BoxShadow(color: kDarkWhite, spreadRadius: 4.0, blurRadius: 4.0, offset: Offset(0, 2))]),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Personal',
+                                    maxLines: 1,
+                                    style: kTextStyle.copyWith(
+                                        color: kNeutralColor,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15),
+                                  ),
+                                  const SizedBox(height: 5,),
+                                  detailtile(
+                                      title: 'Posted by',
+                                      desc:widget.servicemodel.name,
+                                  ),
+                                  detailtile(
+                                      title: 'Address',
+                                      desc:widget.servicemodel.address,
+                                  ),
+                                ],
                               ),
-                              const SizedBox(height: 5.0),
-                              ReadMoreText(
-                                widget.servicemodel.details,
-                                style: kTextStyle.copyWith(
-                                    color: kLightNeutralColor),
-                                trimLines: 3,
-                                colorClickableText: kPrimaryColor,
-                                trimMode: TrimMode.Line,
-                                trimCollapsedText: 'Read more',
-                                trimExpandedText: 'Read less',
-                              ),
+                            ),
+
+                          ),
                               const SizedBox(height: 15.0),
-                              Text(
-                                'Price',
-                                maxLines: 1,
-                                style: kTextStyle.copyWith(
-                                    color: kNeutralColor,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 10.0),
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: kWhite,
-                                  border:
-                                      Border.all(color: kBorderColorTextField),
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                                child: Column(
-                                  children: [
-                                    TabBar(
-                                      unselectedLabelColor: kNeutralColor,
-                                      indicatorSize: TabBarIndicatorSize.tab,
-                                      indicator: const BoxDecoration(
-                                          borderRadius: BorderRadius.only(
-                                            topRight: Radius.circular(8.0),
-                                            topLeft: Radius.circular(8.0),
-                                          ),
-                                          color: kPrimaryColor),
-                                      controller: tabController,
-                                      labelColor: kWhite,
-                                      tabs: const [
-                                        Tab(
-                                          text: 'Basic',
-                                        ),
-                                        Tab(
-                                          text: 'Standard',
-                                        ),
-                                        Tab(
-                                          text: 'Premium',
-                                        ),
-                                      ],
-                                    ),
-                                    const Divider(
-                                      height: 0,
-                                      thickness: 1.0,
-                                      color: kBorderColorTextField,
-                                    ),
-                                    SizedBox(
-                                      height: 80,
-                                      child: TabBarView(
-                                        controller: tabController,
-                                        children: [
-                                          PackageTab(
-                                            plansModel:
-                                                widget.servicemodel.basic,
-                                            title: 'Basic',
-                                          ),
-                                          PackageTab(
-                                            plansModel:
-                                                widget.servicemodel.standard,
-                                            title: 'Standard',
-                                          ),
-                                          PackageTab(
-                                            plansModel:
-                                                widget.servicemodel.premium,
-                                            title: 'Premium',
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              // const SizedBox(height: 15.0),
-                              // Text(
-                              //   'Reviews',
-                              //   maxLines: 1,
-                              //   style: kTextStyle.copyWith(color: kNeutralColor, fontWeight: FontWeight.bold),
-                              // ),
-                              // const SizedBox(height: 15.0),
-                              // Review(
-                              //   rating: widget.servicemodel.rating,
-                              //   ratingcount: widget.servicemodel.ratingcount,
-                              // ),
-                              // const SizedBox(height: 15.0),
-                              // const ReviewDetails(),
-                              // const SizedBox(height: 10.0),
-                              // const ReviewDetails2(),
-                              // const SizedBox(height: 20.0),
-                              // Container(
-                              //   height: 40.0,
-                              //   decoration: BoxDecoration(borderRadius: BorderRadius.circular(30.0), border: Border.all(color: kSubTitleColor)),
-                              //   child: Row(
-                              //     mainAxisAlignment: MainAxisAlignment.center,
-                              //     children: [
-                              //       Text(
-                              //         'View all reviews',
-                              //         maxLines: 1,
-                              //         style: kTextStyle.copyWith(color: kSubTitleColor),
-                              //       ),
-                              //       const Icon(
-                              //         FeatherIcons.chevronDown,
-                              //         color: kSubTitleColor,
-                              //       ),
-                              //     ],
-                              //   ),
-                              // )
+
                             ],
                           ),
                         ),
@@ -502,7 +303,7 @@ class _ServiceDetailsState extends State<ServiceDetails>
               ),
             ],
           ),
-        ),
+
       ),
     );
   }

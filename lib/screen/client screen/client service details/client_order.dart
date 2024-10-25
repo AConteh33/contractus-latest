@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:nb_utils/nb_utils.dart';
 
-import '../../widgets/button_global.dart';
+import '../../widgets/custom_buttons/button_global.dart';
 import '../../widgets/constant.dart';
 import 'client_add_card.dart';
 

@@ -15,13 +15,13 @@ class MediaController extends GetxController {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
-      await uploadImage(File(pickedFile.path));
+      String? newImageUrl = await uploadImage(File(pickedFile.path));
       Get.snackbar(
         "Success!",
         "Your image has been uploaded successfully.",
         snackPosition: SnackPosition.BOTTOM,
       );
-      return ImageModel(file: File(pickedFile.path), url: null);
+      return ImageModel(file: File(pickedFile.path), url: newImageUrl);
     } else {
       return ImageModel(file: null, url: null); // Handle no image selected
     }
@@ -31,13 +31,13 @@ class MediaController extends GetxController {
     final pickedFile = await _picker.pickImage(source: ImageSource.camera);
 
     if (pickedFile != null) {
-      await uploadImage(File(pickedFile.path));
+      String? newImageUrl = await uploadImage(File(pickedFile.path));
       Get.snackbar(
         "Success!",
         "Your image has been uploaded successfully.",
         snackPosition: SnackPosition.BOTTOM,
       );
-      return ImageModel(file: File(pickedFile.path), url: null);
+      return ImageModel(file: File(pickedFile.path), url: newImageUrl);
     } else {
       return ImageModel(file: null, url: null); // Handle no image selected
     }

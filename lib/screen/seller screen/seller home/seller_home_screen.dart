@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:contractus/screen/seller%20screen/profile/seller_profile.dart';
 import 'package:contractus/screen/widgets/constant.dart';
+import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:nb_utils/nb_utils.dart';
 import '../../../controller/datacontroller.dart';
@@ -11,8 +12,9 @@ import '../../widgets/analytics/performancecard.dart';
 import '../../widgets/analytics/statisticscard.dart';
 import '../../widgets/cards/myservicecard.dart';
 import '../../widgets/loading.dart';
-import '../../widgets/mapbutton.dart';
+import '../../widgets/custom_buttons/mapbutton.dart';
 import '../../widgets/searcbox.dart';
+import '../../widgets/topbars/client_home_bar.dart';
 import '../notification/seller_notification.dart';
 import 'my service/my_service.dart';
 
@@ -26,7 +28,9 @@ class SellerHomeScreen extends StatefulWidget {
 
 class _SellerHomeScreenState extends State<SellerHomeScreen> {
 
-  Auth_Controller authy = Auth_Controller();
+  DataController datactrl = DataController();
+
+  Auth_Controller authy = Get.put(Auth_Controller());
 
   @override
   void initState() {
@@ -35,6 +39,9 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
     setState(() {
       authy.signedin;
       authy.getuserdata();
+      // datactrl.getSellerStats(
+      //     uid: authy.authData.value!.id
+      // );
     });
   }
 
@@ -47,62 +54,12 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
           backgroundColor: kDarkWhite,
           elevation: 0,
           automaticallyImplyLeading: false,
-          title: GetBuilder<Auth_Controller>(
-              init: Auth_Controller(),
-              builder: (auth) {
-              return Padding(
-                padding: const EdgeInsets.only(left: 5,top: 5,right: 5),
-                child: ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: GestureDetector(
-                    onTap: () => const SellerProfile().launch(context),
-                    child: Container(
-                      height: 44,
-                      width: 44,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: AssetImage('images/profilepic.png'),
-                        ),
-                      ),
-                    ),
-                  ),
-                  title: Text(
-                    auth.authData.value!.name ,
-                    style: kTextStyle.copyWith(
-                        color: kNeutralColor,
-                        fontWeight: FontWeight.bold
-                    ),
-                  ),
-                  subtitle: Text(
-                    'Seller',
-                    style: kTextStyle.copyWith(color: kLightNeutralColor),
-                  ),
-                  trailing: GestureDetector(
-                    onTap: () => const SellerNotification().launch(context),
-                    child: Container(
-                      padding: const EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: kPrimaryColor.withOpacity(0.2),
-                        ),
-                      ),
-                      child: const Icon(
-                        IconlyLight.notification,
-                        color: kNeutralColor,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            }
-          ),
+          title: HomeBar(signedin: true,),
         ),
         body: Padding(
           padding: const EdgeInsets.only(top: 15.0),
           child: Container(
-            width: context.width(),
+            width: MediaQuery.of(context).size.width,
             padding: const EdgeInsets.only(left: 15.0, right: 15.0),
             decoration: const BoxDecoration(
               color: kWhite,
@@ -113,14 +70,8 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
             ),
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
-              child: GetBuilder<DataController>(
-                  init: DataController(),
-                  builder: (data) {
-
-                    // data.getmyServiceListData(authy.authData.value?.id);
-
-                    return LoadingWidget(
-                      isloading: data.loading.value,
+              child: LoadingWidget(
+                      isloading: datactrl.loading.value,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -134,28 +85,41 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                           const MapButton(),
 
                           const SizedBox(height: 15.0),
-                          PerformanceCard(sellerstatModel: data.sellerstats.value!),
+
+                          PerformanceCard(
+                              sellerstatModel: datactrl.sellerstats
+                          ),
 
                           const SizedBox(height: 20.0),
-                          StatiscticsCard(sellerstatModel: data.sellerstats.value!),
+
+                          StatiscticsCard(
+                              sellerstatModel: datactrl.sellerstats
+                          ),
 
                           const SizedBox(height: 20.0),
-                          EarningsCard(sellerstatModel: data.sellerstats.value!),
+
+                          EarningsCard(
+                              sellerstatModel: datactrl.sellerstats
+                          ),
 
                           const SizedBox(height: 10.0),
+
                           // LevelSelection(),
 
                           // const SizedBox(height: 20.0),
 
                           Row(
                             children: [
+
                               Text(
                                 'My Services',
                                 style: kTextStyle.copyWith(
                                     color: kNeutralColor,
                                     fontWeight: FontWeight.bold),
                               ),
+
                               const Spacer(),
+
                               GestureDetector(
                                 onTap: () => const MyServices().launch(context),
                                 child: Text(
@@ -164,37 +128,36 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                                       color: kLightNeutralColor),
                                 ),
                               ),
+
                             ],
                           ),
 
                           const SizedBox(height: 15.0),
 
-                          data.myserviceModellist.value.isEmpty ?
-                              SizedBox(
-                                height: 205,
-                                child: Center(
-                                  child: Text(
-                                    'You don\'t have a service uploaded yet',
-                                    style: kTextStyle.copyWith(
-                                        color: kLightNeutralColor),
+                          datactrl.myserviceModellist.value.isEmpty
+                              ? SizedBox(
+                                  height: 205,
+                                  child: Center(
+                                    child: Text(
+                                      'You don\'t have a service uploaded yet',
+                                      style: kTextStyle.copyWith(
+                                          color: kLightNeutralColor),
+                                    ),
                                   ),
+                                )
+                              : HorizontalList(
+                                  spacing: 10.0,
+                                  padding: const EdgeInsets.only(bottom: 10.0),
+                                  itemCount: datactrl.myserviceModellist.length,
+                                  itemBuilder: (_, i) {
+                                    return MyServiceCard(
+                                      myservice: datactrl.myserviceModellist[i],
+                                    );
+                                  },
                                 ),
-                              ):
-                          HorizontalList(
-                            spacing: 10.0,
-                            padding: const EdgeInsets.only(bottom: 10.0),
-                            itemCount: data.myserviceModellist.length,
-                            itemBuilder: (_, i) {
-                              return MyServiceCard(
-                                myservice: data.myserviceModellist[i],
-                              );
-                            },
-                          ),
-
                         ],
                       ),
-                    );
-                  }),
+                    ),
             ),
           ),
         ),
@@ -232,9 +195,7 @@ class ChartLegend extends StatelessWidget {
           children: [
             Text(
               title,
-              style: kTextStyle.copyWith(
-                  color: kSubTitleColor
-              ),
+              style: kTextStyle.copyWith(color: kSubTitleColor),
             ),
             const SizedBox(
               height: 5.0,
@@ -242,9 +203,7 @@ class ChartLegend extends StatelessWidget {
             Text(
               value,
               style: kTextStyle.copyWith(
-                  color: kNeutralColor,
-                  fontWeight: FontWeight.bold
-              ),
+                  color: kNeutralColor, fontWeight: FontWeight.bold),
             ),
           ],
         ),

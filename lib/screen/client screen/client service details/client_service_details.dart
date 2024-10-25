@@ -4,7 +4,7 @@ import 'package:contractus/screen/widgets/cards/planscard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
-import 'package:contractus/screen/widgets/button_global.dart';
+import 'package:contractus/screen/widgets/custom_buttons/button_global.dart';
 import 'package:contractus/screen/widgets/constant.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -57,7 +57,7 @@ class _ClientServiceDetailsState extends State<ClientServiceDetails>
     super.dispose();
   }
 
-  final CarouselController _controller = CarouselController();
+  // final _controller = CarouselController();
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +120,7 @@ class _ClientServiceDetailsState extends State<ClientServiceDetails>
                   collapseMode: CollapseMode.parallax,
                   background: SafeArea(
                     child: CarouselSlider.builder(
-                      carouselController: _controller,
+                      // carouselController: _controller,
                       options: CarouselOptions(
                         height: 300,
                         aspectRatio: 18 / 18,

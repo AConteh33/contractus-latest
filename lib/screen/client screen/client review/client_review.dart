@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
-import 'package:contractus/screen/widgets/button_global.dart';
+import 'package:contractus/screen/widgets/custom_buttons/button_global.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import '../../seller screen/seller popUp/seller_popup.dart';

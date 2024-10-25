@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 
+import '../../../consts.dart';
 import '../../widgets/constant.dart';
 
 class ClientPolicy extends StatefulWidget {
@@ -51,7 +52,7 @@ class _ClientPolicyState extends State<ClientPolicy> {
                 ),
                 const SizedBox(height: 10.0),
                 Text(
-                  'Food First envisions a world in which all people have access to healthy, ecologically produced, and culturally appropriate food. After 40 years of analysis of the global food system, we know that making this vision a reality involves more than tech nical solutions—it requires political tran sformation. That’s why Food First supports activists, social movements, alliances, and coalitions working for systemic change. Our work—including action-oriented rese arch, publications, and projects—gives you the tools to understand the global food system, build your local food movement, and engage with the global movement for food sovereignty.',
+                  tos,
                   style: kTextStyle.copyWith(color: kLightNeutralColor),
                 ),
                 const SizedBox(height: 20.0),

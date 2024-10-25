@@ -1,3 +1,6 @@
+import 'package:contractus/const/convertto12hourformat.dart';
+import 'package:contractus/controller/datasettercontroller.dart';
+import 'package:contractus/models/sellermodels/ordermodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
@@ -5,7 +8,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:contractus/screen/seller%20screen/profile/seller_profile.dart';
 import 'package:contractus/screen/seller%20screen/seller%20authentication/verification.dart';
 import 'package:contractus/screen/seller%20screen/seller%20home/seller_home.dart';
-import 'package:contractus/screen/widgets/button_global.dart';
+import 'package:contractus/screen/widgets/custom_buttons/button_global.dart';
+import 'package:get/get.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import '../../client screen/client_authentication/client_log_in.dart';
@@ -713,13 +717,17 @@ class _CancelReasonPopUpState extends State<CancelReasonPopUp> {
 }
 
 class OrderCompletePopUp extends StatefulWidget {
-  const OrderCompletePopUp({Key? key}) : super(key: key);
+  OrderCompletePopUp({required this.ordermodel});
+  OrderModel ordermodel;
 
   @override
   State<OrderCompletePopUp> createState() => _OrderCompletePopUpState();
 }
 
 class _OrderCompletePopUpState extends State<OrderCompletePopUp> {
+
+  DataSetterController datasetter = Get.put(DataSetterController());
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -733,7 +741,7 @@ class _OrderCompletePopUpState extends State<OrderCompletePopUp> {
             Row(
               children: [
                 Text(
-                  'Order Completed',
+                  'Contract Completed',
                   style: kTextStyle.copyWith(color: kNeutralColor, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
@@ -767,14 +775,14 @@ class _OrderCompletePopUpState extends State<OrderCompletePopUp> {
             ),
             const SizedBox(height: 20.0),
             Text(
-              'Your order has been completed. Date Thursday 27 Jun 2023 ',
+              'Your contract has been completed. Date ${formatDate(DateTime.now())} ',
               maxLines: 2,
               textAlign: TextAlign.center,
               style: kTextStyle.copyWith(color: kLightNeutralColor),
             ),
             const SizedBox(height: 10.0),
             Text(
-              'Your Earned \$5.00',
+              'Receipt will be available.',
               maxLines: 1,
               textAlign: TextAlign.center,
               style: kTextStyle.copyWith(color: kNeutralColor, fontWeight: FontWeight.bold),
@@ -784,6 +792,7 @@ class _OrderCompletePopUpState extends State<OrderCompletePopUp> {
               onTap: () {
                 setState(
                   () {
+
                     finish(context);
                   },
                 );
@@ -794,7 +803,7 @@ class _OrderCompletePopUpState extends State<OrderCompletePopUp> {
                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(30.0), color: kPrimaryColor),
                 child: Center(
                   child: Text(
-                    'Got it!',
+                    'Done',
                     style: kTextStyle.copyWith(color: kWhite, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
@@ -1272,7 +1281,7 @@ class _WithdrawAmountPopUpState extends State<WithdrawAmountPopUp> {
                     textColor: kWhite,
                     onPressed: () {
                       finish(context);
-                      const SellerProfile().launch(context);
+                       SellerProfile().launch(context);
                     },
                   ),
                 ),

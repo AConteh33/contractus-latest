@@ -4,7 +4,7 @@ import 'package:contractus/controller/imagecontroller.dart';
 import 'package:contractus/controller/mapcontroller.dart';
 import 'package:contractus/models/categorymodel.dart';
 import 'package:contractus/models/service.dart';
-import 'package:contractus/screen/seller%20screen/seller%20home/seller_service_map.dart';
+import 'package:contractus/screen/mapscreens/seller_service_map.dart';
 import 'package:contractus/screen/widgets/cards/price_package.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +13,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:contractus/screen/seller%20screen/seller%20popUp/seller_popup.dart';
-import 'package:contractus/screen/widgets/button_global.dart';
+import 'package:contractus/screen/widgets/custom_buttons/button_global.dart';
 import 'package:get/get.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
@@ -23,6 +23,7 @@ import '../../../controller/datacontroller.dart';
 import '../../../models/imageModel.dart';
 import '../../widgets/cards/upload_image_card.dart';
 import '../../widgets/constant.dart';
+import '../../widgets/textformfield.dart';
 import 'create_service.dart';
 
 class CreateNewService extends StatefulWidget {
@@ -33,6 +34,7 @@ class CreateNewService extends StatefulWidget {
 }
 
 class _CreateNewServiceState extends State<CreateNewService> {
+
   PageController pageController = PageController(initialPage: 0);
 
   int currentIndexPage = 0;
@@ -42,6 +44,8 @@ class _CreateNewServiceState extends State<CreateNewService> {
   DataSetterController dataSetterController = Get.put(DataSetterController());
   final mediaController = Get.put(MediaController());
   Auth_Controller authy = Get.put(Auth_Controller());
+  TextEditingController price = TextEditingController();
+
   String errortest = '';
   final _formKey = GlobalKey<FormState>();
   String postid = '';
@@ -49,7 +53,6 @@ class _CreateNewServiceState extends State<CreateNewService> {
   String title = '';
   String rating = '0.0';
   int ratingcount = 0;
-  String price = '';
   String name = '';
   String selectedCategory = '';
   String selectedSubCategory = '';
@@ -60,24 +63,10 @@ class _CreateNewServiceState extends State<CreateNewService> {
   List imageurls = [];
   List imagefile = ['', '', ''];
   MapController mapController = Get.put(MapController());
+
   bool favorite = true;
   String description = '';
   //Plans placeholder
-
-  PlansModel basicPlan =
-      PlansModel(price: '5', deliverydays: "", extra: {}, revisions: '3');
-  TextEditingController basicctrl = TextEditingController();
-  String basicprice = '5';
-
-  PlansModel standardPlan =
-      PlansModel(price: '30', deliverydays: "", extra: {}, revisions: '5');
-  TextEditingController standardctrl = TextEditingController();
-  String standardprice = '5';
-
-  PlansModel premiumPLan =
-      PlansModel(price: '60', deliverydays: "", extra: {}, revisions: '10');
-  TextEditingController premiumctrl = TextEditingController();
-  String premiumprice = '5';
 
   bool imageloading = false;
   int categoryindex = 0;
@@ -140,8 +129,7 @@ class _CreateNewServiceState extends State<CreateNewService> {
     );
   }
 
-  //__________ServiceType_______________________________________________________
-
+  //__________ServiceType____________________________________________________________
   DropdownButton<String> getServiceType() {
     List<DropdownMenuItem<String>> dropDownItems = [];
     for (String des in serviceType) {
@@ -297,7 +285,7 @@ class _CreateNewServiceState extends State<CreateNewService> {
         centerTitle: true,
       ),
       body: PageView.builder(
-        itemCount: 4,
+        itemCount: 3,
         physics: const NeverScrollableScrollPhysics(),
         controller: pageController,
         onPageChanged: (int index) => setState(() => currentIndexPage = index),
@@ -324,18 +312,16 @@ class _CreateNewServiceState extends State<CreateNewService> {
                       children: [
                         Text(
                           currentIndexPage == 0
-                              ? 'Step 1 of 4'
+                              ? 'Step 1 of 3'
                               : currentIndexPage == 1
-                                  ? currentIndexPage == 2
-                                      ? 'Step 2 of 4'
-                                      : 'Step 3 of 4'
-                                  : 'Step 4 of 4',
+                                  ? 'Step 2 of 3'
+                                  : 'Step 3 of 3',
                           style: kTextStyle.copyWith(color: kNeutralColor),
                         ),
                         const SizedBox(width: 10.0),
                         Expanded(
                           child: StepProgressIndicator(
-                            totalSteps: 4,
+                            totalSteps: 3,
                             currentStep: currentIndexPage + 1,
                             size: 8,
                             padding: 0,
@@ -352,364 +338,241 @@ class _CreateNewServiceState extends State<CreateNewService> {
                         key: _formKey,
                         child: SingleChildScrollView(
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 20.0),
-                              Text(
-                                'Overview',
-                                style: kTextStyle.copyWith(
-                                    color: kNeutralColor,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 15.0),
-                              TextFormField(
-                                onSaved: (String? value) {
-                                  setState(() {
-                                    title = value!;
-                                  });
-                                },
-                                controller: titlecontroller,
-                                keyboardType: TextInputType.name,
-                                cursorColor: kNeutralColor,
-                                textInputAction: TextInputAction.next,
-                                inputFormatters: [
-                                  LengthLimitingTextInputFormatter(60),
-                                ],
-                                maxLength: 20,
-                                decoration: kInputDecoration.copyWith(
-                                  labelText: 'Service Title',
-                                  labelStyle:
-                                      kTextStyle.copyWith(color: kNeutralColor),
-                                  hintText: 'Enter service title',
-                                  hintStyle: kTextStyle.copyWith(
-                                      color: kSubTitleColor),
-                                  focusColor: kNeutralColor,
-                                  border: const OutlineInputBorder(),
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 20.0),
+                                Text(
+                                  'Overview',
+                                  style: kTextStyle.copyWith(
+                                      color: kNeutralColor,
+                                      fontWeight: FontWeight.bold),
                                 ),
-                                validator: (String? value) {
-                                  if (value!.isEmpty) {
-                                    return 'Please enter service title';
-                                  } else {
-                                    return null;
-                                  }
-                                },
-                              ),
-                              const SizedBox(height: 20.0),
-                              FormField(
-                                builder: (FormFieldState<dynamic> field) {
-                                  return InputDecorator(
-                                    decoration: kInputDecoration.copyWith(
-                                      enabledBorder: const OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(8.0),
-                                        ),
-                                        borderSide: BorderSide(
-                                            color: kBorderColorTextField,
-                                            width: 2),
-                                      ),
-                                      contentPadding: const EdgeInsets.all(7.0),
-                                      floatingLabelBehavior:
-                                          FloatingLabelBehavior.always,
-                                      labelText: 'Category',
-                                      labelStyle: kTextStyle.copyWith(
-                                          color: kNeutralColor,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    child: DropdownButtonHideUnderline(
-                                        child: getCategory()),
-                                  );
-                                },
-                                validator: (String? value) {
-                                  if (value!.isEmpty) {
-                                    return 'Please enter category';
-                                  } else {
-                                    return null;
-                                  }
-                                },
-                              ),
-                              const SizedBox(height: 20.0),
-                              FormField(
-                                builder: (FormFieldState<dynamic> field) {
-                                  return InputDecorator(
-                                    decoration: kInputDecoration.copyWith(
-                                      enabledBorder: const OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(8.0),
-                                        ),
-                                        borderSide: BorderSide(
-                                            color: kBorderColorTextField,
-                                            width: 2),
-                                      ),
-                                      contentPadding: const EdgeInsets.all(7.0),
-                                      floatingLabelBehavior:
-                                          FloatingLabelBehavior.always,
-                                      labelText: 'Subcategory',
-                                      labelStyle: kTextStyle.copyWith(
-                                          color: kNeutralColor,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    child: DropdownButtonHideUnderline(
-                                        child: getSubCategory()),
-                                  );
-                                },
-                                validator: (String? value) {
-                                  if (value!.isEmpty) {
-                                    return 'Please enter subcategory';
-                                  } else {
-                                    return null;
-                                  }
-                                },
-                              ),
-                              const SizedBox(height: 20.0),
-                              FormField(
-                                builder: (FormFieldState<dynamic> field) {
-                                  return InputDecorator(
-                                    decoration: kInputDecoration.copyWith(
-                                      enabledBorder: const OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(8.0),
-                                        ),
-                                        borderSide: BorderSide(
-                                            color: kBorderColorTextField,
-                                            width: 2),
-                                      ),
-                                      contentPadding: const EdgeInsets.all(7.0),
-                                      floatingLabelBehavior:
-                                          FloatingLabelBehavior.always,
-                                      labelText: 'Service Type',
-                                      labelStyle: kTextStyle.copyWith(
-                                          color: kNeutralColor,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    child: DropdownButtonHideUnderline(
-                                        child: getServiceType()),
-                                  );
-                                },
-                                validator: (String? value) {
-                                  if (value!.isEmpty) {
-                                    return 'Please enter service type';
-                                  } else {
-                                    return null;
-                                  }
-                                },
-                              ),
-                              const SizedBox(height: 20.0),
-                              TextFormField(
-                                controller: desccontroller,
-                                keyboardType: TextInputType.multiline,
-                                cursorColor: kNeutralColor,
-                                textInputAction: TextInputAction.next,
-                                maxLines: 5,
-                                inputFormatters: [
-                                  LengthLimitingTextInputFormatter(80),
-                                ],
-                                maxLength: 800,
-                                decoration: kInputDecoration.copyWith(
-                                  labelText: 'Service Description',
-                                  labelStyle:
-                                      kTextStyle.copyWith(color: kNeutralColor),
-                                  hintText: 'Briefly describe your service...',
-                                  hintStyle: kTextStyle.copyWith(
-                                      color: kSubTitleColor),
-                                  focusColor: kNeutralColor,
-                                  floatingLabelBehavior:
-                                      FloatingLabelBehavior.always,
-                                  border: const OutlineInputBorder(),
+                                const SizedBox(height: 15.0),
+                                // Title
+                                TextFormField(
+                                  onSaved: (String? value) {
+                                    setState(() {
+                                      title = value!;
+                                    });
+                                  },
+                                  controller: titlecontroller,
+                                  keyboardType: TextInputType.name,
+                                  cursorColor: kNeutralColor,
+                                  textInputAction: TextInputAction.next,
+                                  inputFormatters: [
+                                    LengthLimitingTextInputFormatter(60),
+                                  ],
+                                  maxLength: 20,
+                                  decoration: kInputDecoration.copyWith(
+                                    labelText: 'Service Title',
+                                    labelStyle: kTextStyle.copyWith(
+                                        color: kNeutralColor),
+                                    hintText: 'Enter service title',
+                                    hintStyle: kTextStyle.copyWith(
+                                        color: kSubTitleColor),
+                                    focusColor: kNeutralColor,
+                                    border: const OutlineInputBorder(),
+                                  ),
+                                  validator: (String? value) {
+                                    if (value!.isEmpty) {
+                                      return 'Please enter service title';
+                                    } else {
+                                      return null;
+                                    }
+                                  },
                                 ),
-                                validator: (String? value) {
-                                  if (value!.isEmpty) {
-                                    return 'Please describe your service';
-                                  } else {
-                                    return null;
-                                  }
-                                },
-                              ),
-                              const SizedBox(height: 20.0),
-                              TextFormField(
-                                onTap: () async {
-                                  ImageModel imagedata =
-                                      await imagectrl.getImageGallery();
-                                  setState(() {
-                                    image = imagedata.file!.path;
-                                  });
-                                },
-                                // enabled: false,
-                                showCursor: false,
-                                readOnly: true,
-                                keyboardType: TextInputType.url,
-                                cursorColor: kNeutralColor,
-                                textInputAction: TextInputAction.next,
-                                decoration: kInputDecoration.copyWith(
-                                  labelText: image == ''
-                                      ? 'Upload file and image'
-                                      : 'Image Uploaded',
-                                  labelStyle:
-                                      kTextStyle.copyWith(color: kNeutralColor),
-                                  hintText: image == ''
-                                      ? 'Upload file and image'
-                                      : 'Image Uploaded',
-                                  hintStyle: kTextStyle.copyWith(
-                                      color: kSubTitleColor),
-                                  focusColor: kNeutralColor,
-                                  border: const OutlineInputBorder(),
-                                  suffixIcon: const Icon(FeatherIcons.upload,
-                                      color: kLightNeutralColor),
+                                const SizedBox(height: 20.0),
+                                // Category
+                                FormField(
+                                  builder: (FormFieldState<dynamic> field) {
+                                    return InputDecorator(
+                                      decoration: kInputDecoration.copyWith(
+                                        enabledBorder: const OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(8.0),
+                                          ),
+                                          borderSide: BorderSide(
+                                              color: kBorderColorTextField,
+                                              width: 2),
+                                        ),
+                                        contentPadding:
+                                            const EdgeInsets.all(7.0),
+                                        floatingLabelBehavior:
+                                            FloatingLabelBehavior.always,
+                                        labelText: 'Category',
+                                        labelStyle: kTextStyle.copyWith(
+                                            color: kNeutralColor,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      child: DropdownButtonHideUnderline(
+                                          child: getCategory()),
+                                    );
+                                  },
+                                  validator: (String? value) {
+                                    if (value!.isEmpty) {
+                                      return 'Please enter category';
+                                    } else {
+                                      return null;
+                                    }
+                                  },
                                 ),
-                                validator: (String? value) {
-                                  if (value!.isEmpty) {
-                                    return 'Please upload file and image';
-                                  } else {
-                                    return null;
-                                  }
-                                },
-                              ),
+                                const SizedBox(height: 20.0),
+                                // Subcategory
+                                FormField(
+                                  builder: (FormFieldState<dynamic> field) {
+                                    return InputDecorator(
+                                      decoration: kInputDecoration.copyWith(
+                                        enabledBorder: const OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(8.0),
+                                          ),
+                                          borderSide: BorderSide(
+                                              color: kBorderColorTextField,
+                                              width: 2),
+                                        ),
+                                        contentPadding:
+                                            const EdgeInsets.all(7.0),
+                                        floatingLabelBehavior:
+                                            FloatingLabelBehavior.always,
+                                        labelText: 'Subcategory',
+                                        labelStyle: kTextStyle.copyWith(
+                                            color: kNeutralColor,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      child: DropdownButtonHideUnderline(
+                                          child: getSubCategory()),
+                                    );
+                                  },
+                                  validator: (String? value) {
+                                    if (value!.isEmpty) {
+                                      return 'Please enter subcategory';
+                                    } else {
+                                      return null;
+                                    }
+                                  },
+                                ),
+                                const SizedBox(height: 20.0),
 
-                              // const SizedBox(height: 5.0),
-                              // Text(
-                              //   'Service tags',
-                              //   style: kTextStyle.copyWith(
-                              //       color: kNeutralColor,
-                              //       fontWeight: FontWeight.bold),
-                              // ),
+                                const SizedBox(height: 20.0),
+                                TextFormField(
+                                  keyboardType: TextInputType.number,
+                                  cursorColor: kNeutralColor,
+                                  textInputAction: TextInputAction.next,
+                                  controller: price,
+                                  validator: (String? value) {
+                                    if (value!.isEmpty) {
+                                      return 'Please enter the payment rate';
+                                    } else {
+                                      return null;
+                                    }
+                                  },
+                                  decoration: kInputDecoration.copyWith(
+                                    labelText: 'Payment Rate',
+                                    labelStyle: kTextStyle.copyWith(
+                                        color: kNeutralColor),
+                                    hintText: ' Price / Time',
+                                    hintStyle: kTextStyle.copyWith(
+                                        color: kSubTitleColor),
+                                    focusColor: kNeutralColor,
+                                    border: const OutlineInputBorder(),
+                                  ),
+                                ),
+                                const SizedBox(height: 20.0),
+                                // Service Description
+                                TextFormField(
+                                  controller: desccontroller,
+                                  keyboardType: TextInputType.multiline,
+                                  cursorColor: kNeutralColor,
+                                  textInputAction: TextInputAction.next,
+                                  maxLines: 5,
+                                  inputFormatters: [
+                                    LengthLimitingTextInputFormatter(80),
+                                  ],
+                                  maxLength: 800,
+                                  decoration: kInputDecoration.copyWith(
+                                    labelText: 'Service Description',
+                                    labelStyle: kTextStyle.copyWith(
+                                        color: kNeutralColor),
+                                    hintText:
+                                        'Briefly describe your service...',
+                                    hintStyle: kTextStyle.copyWith(
+                                        color: kSubTitleColor),
+                                    focusColor: kNeutralColor,
+                                    floatingLabelBehavior:
+                                        FloatingLabelBehavior.always,
+                                    border: const OutlineInputBorder(),
+                                  ),
+                                  validator: (String? value) {
+                                    if (value!.isEmpty) {
+                                      return 'Please describe your service';
+                                    } else {
+                                      return null;
+                                    }
+                                  },
+                                ),
+                                const SizedBox(height: 20.0),
+                                //image upload
+                                TextFormField(
+                                  onTap: () async {
+                                    ImageModel imagedata =
+                                        await imagectrl.getImageGallery();
+                                    setState(() {
+                                      image = imagedata.file!.path;
+                                    });
+                                  },
+                                  // enabled: false,
+                                  showCursor: false,
+                                  readOnly: true,
+                                  keyboardType: TextInputType.url,
+                                  cursorColor: kNeutralColor,
+                                  textInputAction: TextInputAction.next,
+                                  decoration: kInputDecoration.copyWith(
+                                    labelText: image == ''
+                                        ? 'Upload file and image'
+                                        : 'Image Uploaded',
+                                    labelStyle: kTextStyle.copyWith(
+                                        color: kNeutralColor),
+                                    hintText: image == ''
+                                        ? 'Upload file and image'
+                                        : 'Image Uploaded',
+                                    hintStyle: kTextStyle.copyWith(
+                                        color: kSubTitleColor),
+                                    focusColor: kNeutralColor,
+                                    border: const OutlineInputBorder(),
+                                    suffixIcon: const Icon(FeatherIcons.upload,
+                                        color: kLightNeutralColor),
+                                  ),
+                                  validator: (String? value) {
+                                    if (value!.isEmpty) {
+                                      return 'Please upload file and image';
+                                    } else {
+                                      return null;
+                                    }
+                                  },
+                                ),
 
-                              const SizedBox(height: 10.0),
+                                const SizedBox(height: 10.0),
 
-                              Text(
-                                errortest,
-                                style: kTextStyle.copyWith(
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.bold),
-                              ),
+                                image != null
+                                    ? UploadImageCard(imagefile: image)
+                                    : SizedBox(),
 
-                              const SizedBox(
-                                height: 10,
-                              ),
+                                const SizedBox(height: 10.0),
 
-                              // TextFieldTags(
-                              //   textfieldTagsController: _controller,
-                              //   textSeparators: const [' ', ','],
-                              //   letterCase: LetterCase.normal,
-                              //   validator: (String! tag) {
-                              //     if (tag == 'php') {
-                              //       return 'Try else';
-                              //     } else if (_controller.getTags!.contains(tag)) {
-                              //       return 'you already entered that';
-                              //     }
-                              //     return null;
-                              //   },
-                              //   inputfieldBuilder: (context, tec, fn, error, onChanged, onSubmitted) {
-                              //     return ((context, sc, tags, onTagDelete) {
-                              //       return TextFormField(
-                              //         controller: tec,
-                              //         focusNode: fn,
-                              //         cursorColor: kNeutralColor,
-                              //         decoration: kInputDecoration.copyWith(
-                              //           isDense: true,
-                              //           border: const OutlineInputBorder(),
-                              //           focusColor: kNeutralColor,
-                              //           hintText: _controller.hasTags ? '' : "Enter tag...",
-                              //           errorText: error,
-                              //           prefixIconConstraints: BoxConstraints(maxWidth: _distanceToField! * 0.74),
-                              //           prefixIcon: tags.isNotEmpty
-                              //               ? SingleChildScrollView(
-                              //                   controller: sc,
-                              //                   scrollDirection: Axis.horizontal,
-                              //                   child: Row(
-                              //                       children: tags.map((String tag) {
-                              //                     return Container(
-                              //                       decoration: const BoxDecoration(
-                              //                         borderRadius: BorderRadius.all(
-                              //                           Radius.circular(4.0),
-                              //                         ),
-                              //                         color: kBorderColorTextField,
-                              //                       ),
-                              //                       margin: const EdgeInsets.symmetric(horizontal: 10.0),
-                              //                       padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-                              //                       child: Row(
-                              //                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              //                         children: [
-                              //                           InkWell(
-                              //                             child: Text(
-                              //                               tag,
-                              //                               style: kTextStyle.copyWith(color: kNeutralColor),
-                              //                             ),
-                              //                             onTap: () {
-                              //                             },
-                              //                           ),
-                              //                           const SizedBox(width: 4.0),
-                              //                           InkWell(
-                              //                             child: const Icon(
-                              //                               Icons.cancel,
-                              //                               size: 14.0,
-                              //                               color: kNeutralColor,
-                              //                             ),
-                              //                             onTap: () {
-                              //                               onTagDelete(tag);
-                              //                             },
-                              //                           )
-                              //                         ],
-                              //                       ),
-                              //                     );
-                              //                   }).toList()),
-                              //                 )
-                              //               : null,
-                              //         ),
-                              //         onChanged: onChanged,
-                              //         onFieldSubmitted: onSubmitted,
-                              //       );
-                              //     });
-                              //   },
-                              //   inputFieldBuilder: (BuildContext context, InputFieldValues<dynamic> textFieldTagValues) {},
-                              // ),
-                            ],
-                          ),
+                                Text(
+                                  errortest,
+                                  style: kTextStyle.copyWith(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold),
+                                ),
+
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                              ]),
                         ),
                       ),
                     ).visible(currentIndexPage == 0),
-                    SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const SizedBox(height: 20.0),
-                          Text(
-                            'Pricing Package',
-                            style: kTextStyle.copyWith(
-                                color: kNeutralColor,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 15.0),
-                          PricePackage(
-                              getDeliveryTime: getDeliveryTime(basicPlan),
-                              txtctrl: basicctrl,
-                              title: 'Basic Package',
-                              onchange: (price) {
-                                setState(() {
-                                  basicprice = price;
-                                });
-                              }),
-                          const SizedBox(height: 15.0),
-                          PricePackage(
-                              getDeliveryTime: getDeliveryTime(standardPlan),
-                              txtctrl: standardctrl,
-                              title: 'Standard Package',
-                              onchange: (price) {
-                                setState(() {
-                                  standardprice = price;
-                                });
-                              }),
-                          const SizedBox(height: 15.0),
-                          PricePackage(
-                              getDeliveryTime: getDeliveryTime(premiumPLan),
-                              txtctrl: premiumctrl,
-                              title: 'Premium Package',
-                              onchange: (price) {
-                                setState(() {
-                                  premiumprice = price;
-                                });
-                              }),
-                        ],
-                      ),
-                    ).visible(currentIndexPage == 1),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -734,6 +597,11 @@ class _CreateNewServiceState extends State<CreateNewService> {
                                     try {
                                       final ImageModel imagedata =
                                           await imagectrl.getImageGallery();
+                                      imageurls[i] = imagedata.url;
+                                      setState(() {
+                                        imagefile[i] = imagedata.file!.path;
+                                      });
+
                                       await MediaController()
                                           .uploadImage(imagedata.file!);
                                     } catch (error) {
@@ -747,13 +615,17 @@ class _CreateNewServiceState extends State<CreateNewService> {
                                       );
                                     }
                                   },
+                                  child: UploadImageCard(
+                                    imagefile: imagefile[i] ?? '',
+                                  ),
                                 );
                               }),
                         ),
                       ],
-                    ).visible(currentIndexPage == 2),
+                    ).visible(currentIndexPage == 1),
                     Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         const SizedBox(height: 20.0),
                         Text(
@@ -769,7 +641,7 @@ class _CreateNewServiceState extends State<CreateNewService> {
                               selectmap: true,
                             )),
                       ],
-                    ).visible(currentIndexPage == 3),
+                    ).visible(currentIndexPage == 2),
                   ],
                 ),
               ),
@@ -778,7 +650,7 @@ class _CreateNewServiceState extends State<CreateNewService> {
         },
       ),
       bottomNavigationBar: ButtonGlobalWithoutIcon(
-          buttontext: 'Next',
+          buttontext: currentIndexPage == 2 ? 'Post' : 'Next',
           buttonDecoration: kButtonDecoration.copyWith(
             color: kPrimaryColor,
             borderRadius: BorderRadius.circular(30.0),
@@ -791,11 +663,10 @@ class _CreateNewServiceState extends State<CreateNewService> {
             } else {
               _formKey.currentState?.save();
 
-              currentIndexPage < 3
-                  ? pageController.nextPage(
-                      duration: const Duration(microseconds: 3000),
-                      curve: Curves.bounceInOut)
-                  : dataSetterController.addnewservice(
+              print('Post index : $currentIndexPage');
+
+              currentIndexPage == 2
+                  ? dataSetterController.addnewservice(
                       address: mapController.address,
                       location: mapController.pointlocation,
                       images: imageurls,
@@ -808,32 +679,17 @@ class _CreateNewServiceState extends State<CreateNewService> {
                       favorite: favorite,
                       title: titlecontroller.text,
                       details: desccontroller.text,
-                      basic: PlansModel(
-                        price: basicprice,
-                        deliverydays: basicctrl.text,
-                        extra: {},
-                        revisions: '',
-                      ),
-                      standard: PlansModel(
-                        price: standardprice,
-                        deliverydays: standardctrl.text,
-                        extra: {},
-                        revisions: '',
-                      ),
-                      premium: PlansModel(
-                        price: premiumprice,
-                        deliverydays: premiumctrl.text,
-                        extra: {},
-                        revisions: '',
-                      ),
-                      price: '$basicprice - $premiumprice',
+                      price: price.text,
                       ratingcount: ratingcount,
                       image: image,
                       selectedServiceType: selectedServiceType,
-                    );
+                    )
+                  : pageController.nextPage(
+                      duration: const Duration(microseconds: 3000),
+                      curve: Curves.bounceInOut);
             }
 
-            currentIndexPage == 3 ? Get.back() : null;
+            currentIndexPage == 2 ? Get.back() : null;
 
             setState(() {});
           },

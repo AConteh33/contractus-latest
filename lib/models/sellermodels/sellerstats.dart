@@ -6,15 +6,11 @@ import 'package:flutter/material.dart';
 
 class SellerstatModel {
 
-  PerformanceModel performanceModel = PerformanceModel(
-      ontimedelivery: '0', orderscomplete: '0',
-      positiverating: '0.0', totalgig: '0 of 0');
+  PerformanceModel performanceModel;
 
-  EarningModel earningModel = EarningModel(
-      activeorders: 0.0, currentbalance: 0.0,
-      totalearning: 0.0, withdrawearning: 0.0);
+  EarningModel earningModel;
 
-  StatisticModel statisticModel = StatisticModel(impressions: 0.0, interaction: 0.0, reachedout: 0.0);
+  StatisticModel statisticModel;
   
   SellerstatModel({
    required this.statisticModel,

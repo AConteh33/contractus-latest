@@ -16,9 +16,9 @@ class ServiceModel {
   String image;
   bool favorite;
   String details;
-  PlansModel basic;
-  PlansModel standard;
-  PlansModel premium;
+  String category;
+  String subcategory;
+
   int likes;
 
   ServiceModel({
@@ -36,22 +36,20 @@ class ServiceModel {
     required this.name,
     required this.ratingcount,
     required this.details,
-    required this.basic,
-    required this.standard,
-    required this.premium,
+    required this.category,
+    required this.subcategory,
     this.likes = 0,
   });
-
 }
 
-class PlansModel {
 
+
+class PlansModel {
   String price;
 
   String deliverydays;
   String revisions;
-  Map<String,String> extra;
-
+  Map<String, String> extra;
 
   PlansModel({
     required this.price,

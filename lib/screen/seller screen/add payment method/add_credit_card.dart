@@ -1,6 +1,7 @@
+import 'package:contractus/models/auth_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
-import 'package:contractus/screen/widgets/button_global.dart';
+import 'package:contractus/screen/widgets/custom_buttons/button_global.dart';
 import 'package:nb_utils/nb_utils.dart';
 import '../../widgets/constant.dart';
 import '../profile/seller_profile.dart';
@@ -49,7 +50,7 @@ class _AddCreditCardState extends State<AddCreditCard> {
           buttontext: 'Save',
           buttonDecoration: kButtonDecoration.copyWith(borderRadius: BorderRadius.circular(30.0), color: kPrimaryColor),
           onPressed: () {
-            const SellerProfile().launch(context);
+            SellerProfile().launch(context);
           },
           buttonTextColor: kWhite),
       body: Padding(

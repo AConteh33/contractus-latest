@@ -6,7 +6,7 @@ import 'package:contractus/screen/client%20screen/client%20home/client_home_scre
 import 'package:contractus/screen/client%20screen/client_authentication/client_log_in.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:contractus/screen/widgets/button_global.dart';
+import 'package:contractus/screen/widgets/custom_buttons/button_global.dart';
 import 'package:get/get.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,7 +23,6 @@ class ClientSignUp extends StatefulWidget {
 }
 
 class _ClientSignUpState extends State<ClientSignUp> {
-
   bool hidePassword = true;
   bool isCheck = true;
   String firstname = '';
@@ -33,7 +32,6 @@ class _ClientSignUpState extends State<ClientSignUp> {
   String email = '';
   final _formKey = GlobalKey<FormState>();
   final Auth_Controller authcontroller = Get.put(Auth_Controller());
-
 
   @override
   Widget build(BuildContext context) {
@@ -65,9 +63,11 @@ class _ClientSignUpState extends State<ClientSignUp> {
               Center(
                 child: Container(
                   height: 85,
-                  width: MediaQuery.of(context).size.width -50,
+                  width: MediaQuery.of(context).size.width - 50,
                   decoration: const BoxDecoration(
-                    image: DecorationImage(image: AssetImage('images/logo2.png'), fit: BoxFit.fitHeight),
+                    image: DecorationImage(
+                        image: AssetImage('images/logo2.png'),
+                        fit: BoxFit.fitHeight),
                   ),
                 ),
               )
@@ -76,7 +76,7 @@ class _ClientSignUpState extends State<ClientSignUp> {
         ),
         body: Form(
           key: _formKey,
-          child: Padding(            
+          child: Padding(
             padding: const EdgeInsets.all(10.0),
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
@@ -86,18 +86,22 @@ class _ClientSignUpState extends State<ClientSignUp> {
                   Center(
                     child: Text(
                       'Create a New Account',
-                      style: kTextStyle.copyWith(color: kNeutralColor, fontWeight: FontWeight.bold, fontSize: 18.0),
+                      style: kTextStyle.copyWith(
+                          color: kNeutralColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18.0),
                     ),
                   ),
                   const SizedBox(height: 20.0),
-                  TextFormField(onSaved: (String? value){
-                    setState(() {
-                      firstname = value!;
-                    });
-                  },
-                    validator: (value){
-                      if(value == null || value.isEmpty){
-                        return'Enter your first name';
+                  TextFormField(
+                    onSaved: (String? value) {
+                      setState(() {
+                        firstname = value!;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Enter your first name';
                       }
                       return null;
                     },
@@ -114,14 +118,15 @@ class _ClientSignUpState extends State<ClientSignUp> {
                     ),
                   ),
                   const SizedBox(height: 20.0),
-                  TextFormField(onSaved: (String? value){
-                    setState(() {
-                      lastname = value!;
-                    });
-                  },
-                    validator: (value){
-                      if(value == null || value.isEmpty){
-                        return'Enter your last name';
+                  TextFormField(
+                    onSaved: (String? value) {
+                      setState(() {
+                        lastname = value!;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Enter your last name';
                       }
                       return null;
                     },
@@ -139,14 +144,14 @@ class _ClientSignUpState extends State<ClientSignUp> {
                   ),
                   const SizedBox(height: 20.0),
                   TextFormField(
-                    onSaved: (String? value){
-                    setState(() {
-                      email = value!;
-                    });
-                  },
-                    validator: (value){
-                      if(value == null || value.isEmpty){
-                        return'Enter your email address';
+                    onSaved: (String? value) {
+                      setState(() {
+                        email = value!;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Enter your email address';
                       }
                       return null;
                     },
@@ -162,17 +167,16 @@ class _ClientSignUpState extends State<ClientSignUp> {
                       border: const OutlineInputBorder(),
                     ),
                   ),
-                  
                   const SizedBox(height: 20.0),
-
-                  TextFormField(onSaved: (String? value){
-                    setState(() {
-                      phoneno = value!;
-                    });
-                  },
-                    validator: (value){
-                      if(value == null || value.isEmpty){
-                        return'Enter your phone number';
+                  TextFormField(
+                    onSaved: (String? value) {
+                      setState(() {
+                        phoneno = value!;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Enter your phone number';
                       }
                       return null;
                     },
@@ -183,7 +187,8 @@ class _ClientSignUpState extends State<ClientSignUp> {
                         labelText: 'Phone',
                         labelStyle: kTextStyle.copyWith(color: kNeutralColor),
                         hintText: AutofillHints.telephoneNumber,
-                        hintStyle: kTextStyle.copyWith(color: kLightNeutralColor),
+                        hintStyle:
+                            kTextStyle.copyWith(color: kLightNeutralColor),
                         focusColor: kNeutralColor,
                         border: const OutlineInputBorder(),
                         // prefixIcon: Container(
@@ -204,23 +209,19 @@ class _ClientSignUpState extends State<ClientSignUp> {
                         // suffixIcon: const Icon(FeatherIcons.chevronDown),
                         floatingLabelBehavior: FloatingLabelBehavior.always),
                   ),
-
-                  
                   const SizedBox(height: 20.0),
-                  
-                TextFormField(
-                    onSaved: (value){
+                  TextFormField(
+                    onSaved: (value) {
                       setState(() {
                         password = value!;
-          
                       });
                     },
-                  validator: (value){
-                    if(value == null || value.isEmpty){
-                      return'Please enter your password';
-                    }
-                    return null;
-                  },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your password';
+                      }
+                      return null;
+                    },
                     cursorColor: kNeutralColor,
                     keyboardType: TextInputType.emailAddress,
                     obscureText: hidePassword,
@@ -238,7 +239,9 @@ class _ClientSignUpState extends State<ClientSignUp> {
                           });
                         },
                         icon: Icon(
-                          hidePassword ? Icons.visibility_off : Icons.visibility,
+                          hidePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
                           color: kLightNeutralColor,
                         ),
                       ),
@@ -269,7 +272,9 @@ class _ClientSignUpState extends State<ClientSignUp> {
                               children: [
                                 TextSpan(
                                   text: 'Terms of Service.',
-                                  style: kTextStyle.copyWith(color: kPrimaryColor, fontWeight: FontWeight.bold),
+                                  style: kTextStyle.copyWith(
+                                      color: kPrimaryColor,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
@@ -278,23 +283,18 @@ class _ClientSignUpState extends State<ClientSignUp> {
                       ),
                     ],
                   ),
-                  
                   const SizedBox(height: 20.0),
-
-                  ButtonGlobalWithoutIcon(                                        
+                  ButtonGlobalWithoutIcon(
                       buttontext: 'Sign Up',
                       buttonDecoration: kButtonDecoration.copyWith(
                         color: kPrimaryColor,
                         borderRadius: BorderRadius.circular(30.0),
                       ),
                       onPressed: () async {
-
                         if (_formKey.currentState!.validate()) {
-
                           _formKey.currentState!.save();
 
                           try {
-
                             bool results = authcontroller.createAccount(
                               firstname: firstname,
                               lastname: lastname,
@@ -320,17 +320,15 @@ class _ClientSignUpState extends State<ClientSignUp> {
                             //   'email':email
                             // });
 
-                            if(results == true){
-                              print('this is what happens');
+                            if (results == true) {
                               Get.off(() => ClientHomeScreen());
                             }
-
-
                           } on FirebaseAuthException catch (e) {
                             if (e.code == 'weak-password') {
                               print('The password provided is too weak.');
                             } else if (e.code == 'email-already-in-use') {
-                              print('The account already exists for that email.');
+                              print(
+                                  'The account already exists for that email.');
                             }
                           } catch (e) {
                             print(e);
@@ -371,37 +369,17 @@ class _ClientSignUpState extends State<ClientSignUp> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         SocialIcon(
-                          bgColor: kNeutralColor,
-                          iconColor: kWhite,
-                          icon: FontAwesomeIcons.facebookF,
-                          borderColor: Colors.transparent,
-                        ),
-                        SocialIcon(
                           bgColor: kWhite,
                           iconColor: kNeutralColor,
                           icon: FontAwesomeIcons.google,
                           borderColor: kBorderColorTextField,
                         ),
-                        SocialIcon(
-                          bgColor: kWhite,
-                          iconColor: Color(0xFF76A9EA),
-                          icon: FontAwesomeIcons.twitter,
-                          borderColor: kBorderColorTextField,
-                        ),
-                        SocialIcon(
-                          bgColor: kWhite,
-                          iconColor: Color(0xFFFF554A),
-                          icon: FontAwesomeIcons.instagram,
-                          borderColor: kBorderColorTextField,
-                        ),
                       ],
                     ),
                   ),
-                  
                   const SizedBox(height: 20.0),
-
                   GestureDetector(
-                    onTap: ()=> ClientLogIn().launch(context),
+                    onTap: () => ClientLogIn().launch(context),
                     child: Center(
                       child: RichText(
                         text: TextSpan(
@@ -410,7 +388,9 @@ class _ClientSignUpState extends State<ClientSignUp> {
                           children: [
                             TextSpan(
                               text: 'Log In',
-                              style: kTextStyle.copyWith(color: kPrimaryColor, fontWeight: FontWeight.bold),
+                              style: kTextStyle.copyWith(
+                                  color: kPrimaryColor,
+                                  fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),

@@ -1,14 +1,17 @@
 // import 'package:country_code_picker/country_code_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contractus/controller/authcontroller.dart';
+import 'package:contractus/controller/imagecontroller.dart';
+import 'package:contractus/models/imageModel.dart';
 import 'package:contractus/screen/client%20screen/client_authentication/client_otp_verification.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:contractus/controller/authcontroller.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:contractus/screen/seller%20screen/seller%20authentication/verification.dart';
-import 'package:contractus/screen/widgets/button_global.dart';
+import 'package:contractus/screen/widgets/custom_buttons/button_global.dart';
 import 'package:get/get.dart';
 import 'package:nb_utils/nb_utils.dart';
 
@@ -25,6 +28,7 @@ class SellerSignUp extends StatefulWidget {
 
 class _SellerSignUpState extends State<SellerSignUp> {
   final Auth_Controller authcontroller = Get.put(Auth_Controller());
+  MediaController imagectrl = Get.put(MediaController());
   bool hidePassword = true;
   bool isCheck = true;
   String firstname = '';
@@ -32,6 +36,8 @@ class _SellerSignUpState extends State<SellerSignUp> {
   String phoneNo = '';
   String password = '';
   String email = '';
+  String businessName = '';
+  String businessImage = '';
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -169,6 +175,53 @@ class _SellerSignUpState extends State<SellerSignUp> {
                   TextFormField(
                     onSaved: (String? value) {
                       setState(() {
+                        businessName = value!;
+                      });
+                    },
+                    keyboardType: TextInputType.name,
+                    cursorColor: kNeutralColor,
+                    textInputAction: TextInputAction.next,
+                    decoration: kInputDecoration.copyWith(
+                      labelText: 'Business Name',
+                      labelStyle: kTextStyle.copyWith(color: kNeutralColor),
+                      hintText: 'Enter your Business Name',
+                      hintStyle: kTextStyle.copyWith(color: kSubTitleColor),
+                      focusColor: kNeutralColor,
+                      border: const OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 20.0),
+                  TextFormField(
+                    onTap: () async {
+                      ImageModel imagedata = await imagectrl.getImageGallery();
+                      setState(() {
+                        businessImage = imagedata.file!.path;
+                      });
+                    },
+                    showCursor: false,
+                    readOnly: true,
+                    keyboardType: TextInputType.url,
+                    cursorColor: kNeutralColor,
+                    textInputAction: TextInputAction.next,
+                    decoration: kInputDecoration.copyWith(
+                      labelText: businessImage == ''
+                          ? 'Upload file and image'
+                          : 'Image Uploaded',
+                      labelStyle: kTextStyle.copyWith(color: kNeutralColor),
+                      hintText: businessImage == ''
+                          ? 'Upload file and image'
+                          : 'Image Uploaded',
+                      hintStyle: kTextStyle.copyWith(color: kSubTitleColor),
+                      focusColor: kNeutralColor,
+                      border: const OutlineInputBorder(),
+                      suffixIcon: const Icon(FeatherIcons.upload,
+                          color: kLightNeutralColor),
+                    ),
+                  ),
+                  const SizedBox(height: 20.0),
+                  TextFormField(
+                    onSaved: (String? value) {
+                      setState(() {
                         phoneNo = value!;
                       });
                     },
@@ -291,17 +344,18 @@ class _SellerSignUpState extends State<SellerSignUp> {
                           _formKey.currentState!.save();
 
                           try {
-
                             bool results = await authcontroller.createAccount(
-                                firstname: firstname,
-                                lastname: lastname,
-                                password: password,
-                                email: email,
-                                phone: phoneNo,
-                                role: 'seller',
+                              firstname: firstname,
+                              lastname: lastname,
+                              password: password,
+                              email: email,
+                              businessName: businessName,
+                              businessImage: businessImage,
+                              phone: phoneNo,
+                              role: 'seller',
                             );
 
-                            //
+
                             // UserCredential userCredential = await FirebaseAuth
                             //     .instance
                             //     .createUserWithEmailAndPassword(
@@ -323,29 +377,23 @@ class _SellerSignUpState extends State<SellerSignUp> {
                             //   'email': email
                             // });
 
-                            if(results == true){
+                            if (results == true) {
                               print('this is what happens');
                               Get.off(() => const SellerHomeScreen());
                             }
-
-
                           } on FirebaseAuthException catch (e) {
                             if (e.code == 'weak-password') {
                               print('The password provided is too weak.');
                             } else if (e.code == 'email-already-in-use') {
-                              print(
-                                  'The account already exists for that email.');
+                              print('The account already exists for that email.');
                             }
                           } catch (e) {
                             print(e);
                           }
                         } else {}
                       },
-                      buttonTextColor: kWhite
-                  ),
-
+                      buttonTextColor: kWhite),
                   const SizedBox(height: 20.0),
-
                   Row(
                     children: [
                       const Expanded(
@@ -376,27 +424,9 @@ class _SellerSignUpState extends State<SellerSignUp> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         SocialIcon(
-                          bgColor: kNeutralColor,
-                          iconColor: kWhite,
-                          icon: FontAwesomeIcons.facebookF,
-                          borderColor: Colors.transparent,
-                        ),
-                        SocialIcon(
                           bgColor: kWhite,
                           iconColor: kNeutralColor,
                           icon: FontAwesomeIcons.google,
-                          borderColor: kBorderColorTextField,
-                        ),
-                        SocialIcon(
-                          bgColor: kWhite,
-                          iconColor: Color(0xFF76A9EA),
-                          icon: FontAwesomeIcons.twitter,
-                          borderColor: kBorderColorTextField,
-                        ),
-                        SocialIcon(
-                          bgColor: kWhite,
-                          iconColor: Color(0xFFFF554A),
-                          icon: FontAwesomeIcons.instagram,
                           borderColor: kBorderColorTextField,
                         ),
                       ],

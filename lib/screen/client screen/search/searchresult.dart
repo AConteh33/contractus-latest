@@ -11,7 +11,7 @@ import 'package:nb_utils/nb_utils.dart';
 import '../../../controller/datacontroller.dart';
 import '../../../models/service.dart';
 import '../../widgets/bottomsheetfilter.dart';
-import '../../widgets/button_global.dart';
+import '../../widgets/custom_buttons/button_global.dart';
 import '../../widgets/cards/servicecard.dart';
 import '../../widgets/constant.dart';
 import '../../widgets/searcbox.dart';

@@ -1,8 +1,10 @@
+import 'package:contractus/controller/authcontroller.dart';
 import 'package:contractus/models/job_model.dart';
 import 'package:contractus/screen/client%20screen/client%20job%20post/job_details.dart';
 import 'package:contractus/screen/widgets/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' as ab;
+import 'package:get/get_core/src/get_main.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:nb_utils/nb_utils.dart' as nb;
 
@@ -16,12 +18,15 @@ class JobCard extends StatefulWidget {
 }
 
 class _JobCardState extends State<JobCard> {
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10.0),
       child: GestureDetector(
-        onTap: () => const JobDetails().launch(context),
+        onTap: () => JobDetails(
+          jobmodel: widget.jobmodel,
+        ).launch(context),
         child: Container(
           width: MediaQuery.of(context).size.width,
           padding: const EdgeInsets.all(10.0),
@@ -33,10 +38,19 @@ class _JobCardState extends State<JobCard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                widget.jobmodel.title,
-                style: kTextStyle.copyWith(
-                    color: kNeutralColor, fontWeight: FontWeight.bold),
+              Row(
+                children: [
+                  Text(
+                    widget.jobmodel.title,
+                    style: kTextStyle.copyWith(
+                        color: kNeutralColor, fontWeight: FontWeight.bold),
+                  ),
+                  const Spacer(),
+                  Text(
+                    'Budget: ${widget.jobmodel.paymentrate}',
+                    style: kTextStyle.copyWith(color: kLightNeutralColor),
+                  ),
+                ],
               ),
               const SizedBox(height: 10.0),
               Text(
@@ -68,16 +82,11 @@ class _JobCardState extends State<JobCard> {
                         borderRadius: BorderRadius.circular(30.0),
                         color: kDarkWhite),
                     child: Text(
-                      widget.jobmodel.status,
+                      'Date: ${widget.jobmodel.datestr}',
                       style: kTextStyle.copyWith(color: kNeutralColor),
                     ),
                   ),
                   const Spacer(),
-                  Text(
-                    'Date: ${widget.jobmodel.datestr}',
-                    style: kTextStyle.copyWith(color: kLightNeutralColor),
-                  ),
-
                 ],
               )
             ],

@@ -3,7 +3,7 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:contractus/screen/seller%20screen/seller%20home/seller_home.dart';
 import 'package:nb_utils/nb_utils.dart';
 
-import '../../widgets/button_global.dart';
+import '../../widgets/custom_buttons/button_global.dart';
 import '../../widgets/constant.dart';
 
 class CreateCustomerOffer extends StatefulWidget {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../seller screen/seller home/seller_home.dart';
+import '../../seller screen/seller home/seller_home.dart';
 import 'button_global.dart';
-import 'constant.dart';
+import '../constant.dart';
 
 class SimpleButton extends StatelessWidget {
   SimpleButton({

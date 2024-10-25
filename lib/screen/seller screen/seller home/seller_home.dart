@@ -1,8 +1,12 @@
+import 'package:contractus/controller/authcontroller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:contractus/screen/seller%20screen/seller%20home/seller_home_screen.dart';
 import 'package:contractus/screen/widgets/constant.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import '../../client screen/client orders/client_orders.dart';
 import '../orders/seller_orders.dart';
 import '../profile/seller_profile.dart';
 import '../seller messgae/chat_list.dart';
@@ -18,11 +22,14 @@ class SellerHome extends StatefulWidget {
 class _SellerHomeState extends State<SellerHome> {
   int _currentPage = 0;
 
-  static const List<Widget> _widgetOptions = <Widget> [
+  Auth_Controller authy = Get.put(Auth_Controller());
+
+  static List<Widget> _widgetOptions = <Widget>[
     SellerHomeScreen(),
     ChatScreen(),
     CreateService(),
-    SellerOrderList(),
+    ClientOrderList(),
+    // SellerOrderList(),
     SellerProfile(),
   ];
 
@@ -33,7 +40,6 @@ class _SellerHomeState extends State<SellerHome> {
       body: _widgetOptions.elementAt(_currentPage),
       bottomNavigationBar: Stack(
         children: [
-
           Container(
             padding: const EdgeInsets.all(8.0),
             decoration: const BoxDecoration(
@@ -42,10 +48,15 @@ class _SellerHomeState extends State<SellerHome> {
                   topRight: Radius.circular(30.0),
                   topLeft: Radius.circular(30.0),
                 ),
-                boxShadow: [BoxShadow(color: kDarkWhite, blurRadius: 5.0, spreadRadius: 3.0, offset: Offset(0, -2))]),
+                boxShadow: [
+                  BoxShadow(
+                      color: kDarkWhite,
+                      blurRadius: 5.0,
+                      spreadRadius: 3.0,
+                      offset: Offset(0, -2))
+                ]),
             child: Stack(
               children: [
-
                 BottomNavigationBar(
                   elevation: 0.0,
                   selectedItemColor: kPrimaryColor,
@@ -54,7 +65,6 @@ class _SellerHomeState extends State<SellerHome> {
                   showUnselectedLabels: true,
                   type: BottomNavigationBarType.fixed,
                   items: const [
-
                     BottomNavigationBarItem(
                       icon: Icon(IconlyBold.home),
                       label: "Home",
@@ -72,7 +82,7 @@ class _SellerHomeState extends State<SellerHome> {
                     ),
                     BottomNavigationBarItem(
                       icon: Icon(IconlyBold.document),
-                      label: "Orders",
+                      label: "Contracts",
                     ),
                     BottomNavigationBarItem(
                       icon: Icon(IconlyBold.profile),
@@ -84,15 +94,11 @@ class _SellerHomeState extends State<SellerHome> {
                   },
                   currentIndex: _currentPage,
                 ),
-
-
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-
                     GestureDetector(
-                      onTap: (){
+                      onTap: () {
                         setState(() => _currentPage = 2);
                       },
                       child: Padding(
@@ -102,21 +108,17 @@ class _SellerHomeState extends State<SellerHome> {
                           child: Image.asset(
                             "images/IMG_9391.png",
                             colorBlendMode: BlendMode.color,
-                            color: _currentPage == 2 ?
-                            Colors.green : Colors.grey,
+                            color:
+                                _currentPage == 2 ? Colors.green : Colors.grey,
                           ),
                         ),
                       ),
                     ),
-
                   ],
                 ),
-
               ],
             ),
           ),
-
-
         ],
       ),
     );

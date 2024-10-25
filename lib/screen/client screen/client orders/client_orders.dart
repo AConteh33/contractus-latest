@@ -1,12 +1,15 @@
 import 'package:contractus/controller/datacontroller.dart';
 import 'package:contractus/screen/widgets/cards/ordercard.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:slide_countdown/slide_countdown.dart';
 
+import '../../../controller/authcontroller.dart';
 import '../../widgets/constant.dart';
 import 'client_order_details.dart';
 
@@ -18,6 +21,26 @@ class ClientOrderList extends StatefulWidget {
 }
 
 class _ClientOrderListState extends State<ClientOrderList> {
+
+  DataController dataCtrl = Get.put(DataController());
+  Auth_Controller authy = Get.put(Auth_Controller());
+  FirebaseAuth fireauth = FirebaseAuth.instance;
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    if(authy.signedin.value){
+      dataCtrl.getmyOrderListData(
+          id: fireauth.currentUser!.uid,
+          iseller: authy.authData.value!.role == 'seller',
+      );
+    }
+
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -44,7 +67,7 @@ class _ClientOrderListState extends State<ClientOrderList> {
                   width: MediaQuery.of(context).size.width,
                   child: Center(
                     child: Text(
-                      'Orders',
+                      'Contracts',
                       style: kTextStyle.copyWith(
                           color: kNeutralColor,
                           fontWeight: FontWeight.bold
@@ -56,7 +79,7 @@ class _ClientOrderListState extends State<ClientOrderList> {
                   child: Padding(
                     padding: const EdgeInsets.only(top: 0.0),
                     child: Container(
-                      width: context.width(),
+                      width: MediaQuery.of(context).size.width,
                       decoration: const BoxDecoration(
                         color: kWhite,
                         borderRadius: BorderRadius.only(
@@ -114,7 +137,7 @@ class _ClientOrderListState extends State<ClientOrderList> {
                                         status: isSelected,
                                       );
                                     }else{
-                                      return SizedBox();
+                                      return const SizedBox();
                                     }
                                     
                                     

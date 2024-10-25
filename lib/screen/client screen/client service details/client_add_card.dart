@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
 import 'package:contractus/screen/client%20screen/client%20service%20details/requirements.dart';
-import 'package:contractus/screen/widgets/button_global.dart';
+import 'package:contractus/screen/widgets/custom_buttons/button_global.dart';
 import 'package:nb_utils/nb_utils.dart';
 import '../../widgets/constant.dart';
 import '../client popup/client_popup.dart';
